@@ -10,6 +10,10 @@ autorizada en la cuenta remoteuser.
 
 >[!NOTE]
 >
->Alt + F2 en Gnome se abre ventana para  ejecutar un comando.
->Super + L Bloqueo de la sesión.
->$yelp Abre ayuda de Gnome
+>- Alt + F2 en Gnome se abre ventana para  ejecutar un comando.
+>
+>- Super + L Bloqueo de la sesión.
+>
+>- $yelp #Abre ayuda de Gnome
+>
+>- $yelp help:gnome-help/shell-introduction  #Resumen visual de GNOME
