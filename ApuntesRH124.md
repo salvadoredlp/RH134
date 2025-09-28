@@ -17,3 +17,20 @@ autorizada en la cuenta remoteuser.
 >- **$yelp** Abre ayuda de Gnome
 >
 >- **$yelp help:gnome-help/shell-introduction**  Resumen visual de GNOME
+
+
+Para cambiar el password
+
+```bash
+[user@host ~]$ passwd
+Changing password for user user.
+Current password: old_password
+New password: new_password
+Retype new password: new_password
+passwd: all authentication tokens updated successfully
+```
+
+Para ver el tipo de fichero se usa el comando file, en linux no es necesaria extensión
+
+```bash
+$file
