@@ -391,7 +391,27 @@ The time is 26 minutes past 11AM.
 >```console
 >[user@host glob]$ echo The value of $HOME is your home directory.
 >The value of /home/user is your home directory.
+>
 >[user@host glob]$ echo The value of \$HOME is your home directory.
 >The value of $HOME is your home directory.
->```
+
+Para proteger las cadenas de caracteres más extensas, puede usar comillas simples (') o dobles (") para encerrar las cadenas. Tienen efectos ligeramente diferentes. Las comillas simples
+detienen toda la expansión de shell. Las comillas dobles detienen la mayor parte de la expansión de shell.
+
+Las comillas dobles evitan que los caracteres especiales que no sean el signo dólar ($), la barra
+invertida (\), la comilla invertida (`) y el signo de exclamación (!) operen dentro del texto entre comillas. Las comillas dobles bloquean la expansión del nombre de ruta, pero aún permite que ocurra la sustitución de comandos y la expansión de variables.
+
+```console
+[user@host glob]$ myhost=$(hostname -s); echo $myhost
+host
+[user@host glob]$ echo "***** hostname is ${myhost} *****"
+***** hostname is host *****
+Use comillas simples para interpretar todo el texto entre comillas literalmente.
+[user@host glob]$ echo "Will variable $myhost evaluate to $(hostname -s)?"
+Will variable host evaluate to host?
+[user@host glob]$ echo 'Will variable $myhost evaluate to $(hostname -s)?'
+Will variable $myhost evaluate to $(hostname -s)?
+```
+
+
 
