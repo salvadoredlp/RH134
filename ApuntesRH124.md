@@ -1,4 +1,4 @@
-### RH123 ###
+## RH123 ##
 
  El comando ssh con la opción -i se usa para especificar el archivo de clave privada del
 usuario, que es mylab.pem. La clave pública coincidente ya está configurada como una clave
@@ -18,6 +18,10 @@ autorizada en la cuenta remoteuser.
 >- **$yelp** Abre ayuda de Gnome
 >
 >- **$yelp help:gnome-help/shell-introduction**  Resumen visual de GNOME
+
+### Comandos ###
+
+*Muchos comandos tienen la opcion --help para mostrar mensajes de ayuda para el uso del comando*
 
 ***passwd*** Para cambiar la contraseña del usuario que este activo
 
@@ -96,6 +100,7 @@ dnsmasq:x:979:977:Dnsmasq DHCP and DNS server:/var/lib/dnsmasq:/sbin/nologin
 
 ***history*** Sirve para mostrar los últimos comandos ejecutados en la bash .
 ***!number*** Para ejecutar el comando que ocupa la posicion que se muestra al ejecutar history***
+***!!***      Último comando ejecutado
 
 ***Alt+.*** Para insertar la última palabra del anterior comando, se puede pulsar varias veces para ir viendo las últimas palabras.
 ***Crtl+A*** Saltar al inicio del comando.
@@ -116,3 +121,18 @@ dnsmasq:x:979:977:Dnsmasq DHCP and DNS server:/var/lib/dnsmasq:/sbin/nologin
 ***Ctrl+RightArrow*** Ir al final de la palabra siguiente en la línea de comandos.
 
 ***Ctrl+R***          Buscar un patrón en la lista de historial de comandos.
+
+
+### Directorios ###
+
+| Ubicación   |           Proposito                                       |
+|--------------|-----------------------------------------------------------|
+| /boot     |          Archivos para iniciar el proceso de arranque.      |
+| /dev      |          Archivos de dispositivo especiales que el sistema usa para acceder al hardware.|
+| /etc        |          Archivos de configuración específicos del sistema.|
+| /home       |         Directorio de inicio, donde los usuarios habituales guardan sus datos y los archivos de configuración.|
+| /root       |          Directorio de inicio para el superusuario administrativo, root.|
+| /run        |          Datos de tiempo de ejecución para procesos que se iniciaron desde el último arranque. Esto incluye archivos de ID de proceso y archivos de bloqueo. El contenido de este directorio se vuelve a crear en el arranque nuevo. En este directorio se consolidan los directorios /var/run y /var/lock de versiones anteriores de Red Hat Enterprise Linux. |
+| /tmp        |Un espacio con capacidad de escritura por parte de cualquier usuario del sistema para archivos temporales. Los archivos a los que no se haya accedido, y que no se hayan cambiado ni modificado durante 10 días se eliminan de este directorio automáticamente. El directorio /var/tmp es también un directorio temporal, en el que los archivos que no tuvieron acceso, cambios ni modificaciones durante más de 30 días se eliminan automáticamente. |
+| /usr        | Software instalado, librerías compartidas, incluidos archivos y datos de programa de solo lectura. Los subdirectorios importantes del directorio /usr incluyen los siguientes comandos:<br><br>-/usr/bin: Comandos del usuario <br>-/usr/sbin: Comandos de administración del sistema<br>- /usr/local: Software personalizado a nivel local |
+| /var |System-specific variable data should persist between boots. Files that dynamically change, such as databases, cache directories, log files, printer-spooled documents, and website content, might be found under /var. |
