@@ -82,6 +82,7 @@ dnsmasq:x:979:977:Dnsmasq DHCP and DNS server:/var/lib/dnsmasq:/sbin/nologin
 114 /etc/hosts
 997 total
 ```
+
 ***backslash character (\)*** Sirve para quitar significado al siguiente caracter en caso de que el caracter que le siga sea el salto de linea lo ignorara. Puede servir para escribir comandos de multiples lineas.
 
 ```console
@@ -135,5 +136,88 @@ dnsmasq:x:979:977:Dnsmasq DHCP and DNS server:/var/lib/dnsmasq:/sbin/nologin
 | /run        |          Datos de tiempo de ejecución para procesos que se iniciaron desde el último arranque. Esto incluye archivos de ID de proceso y archivos de bloqueo. El contenido de este directorio se vuelve a crear en el arranque nuevo. En este directorio se consolidan los directorios /var/run y /var/lock de versiones anteriores de Red Hat Enterprise Linux. |
 | /tmp        |Un espacio con capacidad de escritura por parte de cualquier usuario del sistema para archivos temporales. Los archivos a los que no se haya accedido, y que no se hayan cambiado ni modificado durante 10 días se eliminan de este directorio automáticamente. El directorio /var/tmp es también un directorio temporal, en el que los archivos que no tuvieron acceso, cambios ni modificaciones durante más de 30 días se eliminan automáticamente. |
 | /usr        | Software instalado, librerías compartidas, incluidos archivos y datos de programa de solo lectura. Los subdirectorios importantes del directorio /usr incluyen los siguientes comandos:<br><br>- /usr/bin: Comandos del usuario <br>- /usr/sbin: Comandos de administración del sistema<br>- /usr/local: Software personalizado a nivel local |
-| /var |Los datos variables específicos del sistema deberían conservarse entre los
-arranques. Los archivos que cambian en forma dinámica (por ejemplo, bases de datos, directorios caché, archivos de registro, documentos en cola de impresión y contenido de sitio web) pueden encontrarse en /var. |
+| /var |Los datos variables específicos del sistema deberían conservarse entre los arranques. Los archivos que cambian en forma dinámica (por ejemplo, bases de datos, directorios caché, archivos de registro, documentos en cola de impresión y contenido de sitio web) pueden encontrarse en /var. |
+
+
+***pwd***      Muestra la ruta completa del directorio de trabajo actual.
+
+***ls***       Enumera contenido del directorio actual.<br>
+>[!NOTE]
+>    **opciones de ls**<br>
+>    <br>
+>   -l  Formato de enumeración extensa<br>
+>   -a  Todos los archivos incluidos los ocultos<br>
+>   -R  Recurrente para incluir el contenido de todos los subdirectorios<br>
+     
+***cd***       Cambiar del directorio actual.
+
+*~*        Directorio de inicio del usuario actual.
+
+***touch***   Actualiza la marca de tiempo de un archivo con respcto a la fecha y hora actual sin modificarlo. Es útil para crear archivos vacíos.
+
+>[!NOTE]
+>Los nombres de archivo que comienzan con un punto (.) indican archivos
+ocultos
+
+***mkdir*** Sirve para crear directorios. Puedes crear varios en una sola linea 
+```console
+user@host ~]$ cd Documents
+[user@host Documents]$ mkdir ProjectX ProjectY ProjectZ
+[user@host Documents]$ ls
+ProjectX ProjectY ProjectZ
+```
+
+ *mkdir -p* Si el fichero padre no existe, lo crea
+ ```console
+[user@host Documents]$ mkdir -p Thesis/Chapter1 Thesis/Chapter2 Thesis/Chapter3
+[user@host Documents]$ ls -R Thesis/
+Thesis/:
+Chapter1 Chapter2 Chapter3
+Thesis/Chapter1:
+Thesis/Chapter2:
+Thesis/Chapter3:
+```
+
+***cp*** Copiar archivo y crea un archivo en el directorio actual o en otro directorio especificado. El último argumento debe ser un directorio que sera el directorio destino de los ficheros. 
+
+*.*  Directorio actual
+*..* Directorio padre
+*-r* Para copiar directorio y todo su contenido.
+
+ ```console
+[user@host Documents]$ cd ProjectY
+[user@host ProjectY]$ cp -r ../Thesis/ .
+```
+
+***mv*** Mueve los ficheros de una ubicación a otra. Tambien se puede usar para cambiar de nombre un fichero.
+
+***rm*** Elmina archivos. De manera predeterminada no elimina directorios para eliminar directorios hay que incluir la opción *-r*.<br>
+    - **-i** Se usa para pedir confirmación interactiva antes de la eliminación<br>
+    - **-f** No pide confirmación, fuerza la eliminación sin confirmar con el usuario. Tiene prioridad sobre *-i*<br>
+
+***rmdir*** Para eliminar directorios vacios. rmdir -r para directorios no vacios
+
+
+## Creación de enlaces entre archivos ##
+
+Para ver cuantos links tiene un archivo hay que usar la opción *-l* de ***ls***
+Para crear enlaces se usa el comando ***ln***
+
+### Hard Links ###
+
+
+Cuando crea un enlace duro a un archivo, crea otro nombre que apunta a esos
+mismos datos. El nuevo enlace duro actúa exactamente igual que el nombre del archivo original.
+Después de que se crea el enlace, no puede distinguir la diferencia entre el nuevo enlace duro y el
+nombre original del archivo. 
+
+```console
+[user@host ~]$ ln newfile.txt /tmp/newfile-hlink2.txt
+[user@host ~]$ ls -l newfile.txt /tmp/newfile-hlink2.txt
+-rw-rw-r--. 2 user user 12 Mar 11 19:19 newfile.txt
+-rw-rw-r--. 2 user user 12 Mar 11 19:19 /tmp/newfile-hlink2.txt
+```
+
+>[!NOTE]
+>Para determinar si dos archivos tienen un enlace duro, use el comando ls con la opción ***-i*** para enumerar el número de inodo de cada archivo.
+>Si los archivos están en el mismo sistema de archivos y sus números de inodo son los mismos, los archivos son enlaces duros que apuntan a los mismos contenidos de los archivos de datos.
