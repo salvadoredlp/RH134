@@ -221,3 +221,17 @@ nombre original del archivo.
 >[!NOTE]
 >Para determinar si dos archivos tienen un enlace duro, use el comando ls con la opción ***-i*** para enumerar el número de inodo de cada archivo.
 >Si los archivos están en el mismo sistema de archivos y sus números de inodo son los mismos, los archivos son enlaces duros que apuntan a los mismos contenidos de los archivos de datos.
+>```console
+>[user@host ~]$ ls -il newfile.txt /tmp/newfile-hlink2.txt
+>8924107 -rw-rw-r--. 2 user user 12 Mar 11 19:19 newfile.txt
+>8924107 -rw-rw-r--. 2 user user 12 Mar 11 19:19 /tmp/newfile-hlink2.txt
+>```
+
+>[!WARNING]
+>Todos los enlaces duros que hacen referencia al mismo archivo tendrán la misma estructura de inodos que el recuento de enlaces, permiso de acceso, pertenencia a usuarios y grupos, marcas de tiempo y contenido de archivo.
+>Cuando se cambia esa información para un enlace duro, los otros enlaces duros para el mismo archivo
+también muestran la nueva información.
+> Esto se debe a que cada enlace duro apunta a los mismos datos en el dispositivo de almacenamiento.
+>
+>Incluso si se elimina el archivo original, aún puede acceder al contenido del archivo siempre que exista al menos un enlace duro adicional.
+> Los datos se eliminan del almacenamiento solo cuando se elimina el último enlace duro.
