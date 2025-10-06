@@ -1,3 +1,4 @@
+### RH123 ###
 
  El comando ssh con la opción -i se usa para especificar el archivo de clave privada del
 usuario, que es mylab.pem. La clave pública coincidente ya está configurada como una clave
@@ -77,3 +78,41 @@ dnsmasq:x:979:977:Dnsmasq DHCP and DNS server:/var/lib/dnsmasq:/sbin/nologin
 114 /etc/hosts
 997 total
 ```
+***backslash character (\)*** Sirve para quitar significado al siguiente caracter en caso de que el caracter que le siga sea el salto de linea lo ignorara. Puede servir para escribir comandos de multiples lineas.
+
+```console
+[user@host ~]$ head -n 3 \
+/usr/share/dict/words \
+/usr/share/dict/linux.words
+==> /usr/share/dict/words <==
+1080
+10-point
+10th
+==> /usr/share/dict/linux.words <==
+1080
+10-point
+10th
+```
+
+***history*** Sirve para mostrar los últimos comandos ejecutados en la bash .
+***!number*** Para ejecutar el comando que ocupa la posicion que se muestra al ejecutar history***
+
+***Alt+.*** Para insertar la última palabra del anterior comando, se puede pulsar varias veces para ir viendo las últimas palabras.
+***Crtl+A*** Saltar al inicio del comando.
+***Ctrl+ UpArrow or DownArrow*** Para navegar entre los últimos comandos ejecutados.
+
+#### Métodos abreviados útiles de edición de línea de comandos ####
+
+***Ctrl+A***          Ir al inicio de la línea de comandos.
+
+***Ctrl+E***          Ir al final de la línea de comandos.
+
+***Ctrl+U***          Borrar desde el cursor hasta el principio de la línea de comandos.
+
+***Ctrl+K***          Borrar desde el cursor hasta el final de la línea de comandos.
+
+***Ctrl+LeftArrow***  Ir al inicio de la palabra anterior en la línea de comandos.
+
+***Ctrl+RightArrow*** Ir al final de la palabra siguiente en la línea de comandos.
+
+***Ctrl+R***          Buscar un patrón en la lista de historial de comandos.
