@@ -61,3 +61,5 @@ El servicio **man-db-cache-update** ejecuta automáticamente el comando mandb al
 
 
 ## Redireccionamiento de la salida a un archivo o programa ## 
+
+Página 122 del manual 124 en castellano
