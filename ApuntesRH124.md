@@ -205,6 +205,7 @@ Para crear enlaces se usa el comando ***ln***
 
 ### Hard Links ###
 
+**Solo se pueden crear archivos duros (hard links) dentro del mismo sistema de archivos.
 
 Cuando crea un enlace duro a un archivo, crea otro nombre que apunta a esos
 mismos datos. El nuevo enlace duro actúa exactamente igual que el nombre del archivo original.
@@ -217,6 +218,8 @@ nombre original del archivo.
 -rw-rw-r--. 2 user user 12 Mar 11 19:19 newfile.txt
 -rw-rw-r--. 2 user user 12 Mar 11 19:19 /tmp/newfile-hlink2.txt
 ```
+
+
 
 >[!NOTE]
 >Para determinar si dos archivos tienen un enlace duro, use el comando ls con la opción ***-i*** para enumerar el número de inodo de cada archivo.
@@ -235,3 +238,160 @@ también muestran la nueva información.
 >
 >Incluso si se elimina el archivo original, aún puede acceder al contenido del archivo siempre que exista al menos un enlace duro adicional.
 > Los datos se eliminan del almacenamiento solo cuando se elimina el último enlace duro.
+
+**Solo se pueden usar enlaces duros a archivos normales, no se puede a directorios**
+
+**df** Muestra información acerca del sistema de archivos en donde se aloja cada archivo o, por defecto, de todos ellos.
+
+### Soft Links ###
+
+Un enlace simbólico no es un archivo regular, sino un tipo de archivo especial que apunta
+a un archivo o a un directorio existente. Se usa el comando ***ln*** pero con la opción ***-s*** .
+
+```console
+[user@host ~]$ ln -s /home/user/newfile-link2.txt /tmp/newfile-symlink.txt
+[user@host ~]$ ls -l newfile-link2.txt /tmp/newfile-symlink.txt
+-rw-rw-r--. 1 user user 12 Mar 11 19:19 newfile-link2.txt
+lrwxrwxrwx. 1 user user 11 Mar 11 20:59 /tmp/newfile-symlink.txt -> /home/user/
+newfile-link2.txt
+[user@host ~]$ cat /tmp/newfile-symlink.txt
+Symbolic Hello World
+```
+
+**Pueden vincular archivos en diferentes sistemas de archivos.**
+**Pueden apuntar a un directorio o a un archivo especial.**
+
+>[!NOTA]
+>Cuando se elimina el archivo regular original, el enlace simbólico seguirá apuntando al archivo, 
+>pero el destino desaparece. Un enlace simbólico que apunta a un archivo que falta se denomina "enlace simbólico colgante" (dangling symbolic link).
+> Si creamos un fichero con el mismo nombre que el que hemos borrado el enlace simbolico ya no estara colgando ya que apuntara al nuevo fichero
+>
+> - Un hard link (enlace duro) apunta a un nombre a los datos de un dispositivo de almacenamiento
+> - Un enlace simbólico apunta un nombre a otro nombre, que apunta a datos en un dispositivo de almacenamiento.
+
+
+```console
+[user@host ~]$ rm -f newfile-link2.txt
+[user@host ~]$ ls -l /tmp/newfile-symlink.txt
+lrwxrwxrwx. 1 user user 11 Mar 11 20:59 /tmp/newfile-symlink.txt -> /home/user/
+newfile-link2.txt
+[user@host ~]$ cat /tmp/newfile-symlink.txt
+cat: /tmp/newfile-symlink.txt: No such file or directory
+```
+
+Al entrar en un enlace simbolico que apunta a directorio nuestra ruta sera la del enlace simbolico no real a la que apunta, si queremos actulizar para que apuntemos a la real tendremos que usar la opción **-P** de **cd**
+
+```console
+[user@host ~]$ ln -s /etc /home/user/configfiles
+[user@host ~]$ cd /home/user/configfiles
+[user@host configfiles]$ pwd
+/home/user/configfiles
+[user@host configfiles]$ cd -P /home/user/configfiles
+[user@host etc]$ pwd
+/etc
+```
+
+### Expansiones de las líneas de comando ###
+
+***Tabla de metacaracteres y coincidencias***
+
+| Patrón        |    Coincidencias |
+|---------------|-------------------|
+| *            | Cualquier cadena de cero o más caracteres |
+| ?            | Cualquier carácter individual             |
+| [abc…]       | Cualquier carácter en la clase incluida (entre corchetes) |
+| [!abc…]      | Cualquier carácter que no esté en la clase incluida |
+| [^abc…]      | Cualquier carácter que no esté en la clase incluida |
+| [[:alpha:]]  | Cualquier carácter alfabético |
+| [[:lower:]]  | Cualquier carácter en minúsculas |
+| [[:upper:]]  | Cualquier carácter en mayúsculas |
+| [[:alnum:]]  | Cualquier dígito o carácter alfabético |
+| [[:punct:]]  | Cualquier carácter imprimible que no sea un espacio o alfanumérico |
+| [[:digit:]]  | Cualquier dígito de 0 a 9 |
+| [[:space:]]  | Cualquier carácter de espacio en blanco, que puede incluir tabulaciones,nuevas líneas, retornos de carro, fuentes de formulario o espacios |
+
+**Ejemplos** 
+
+```console
+[user@host glob]$ ls a*
+able alfa
+[user@host glob]$ ls *a*
+able alfa baker bravo cast
+[user@host glob]$ ls [ac]*
+able alfa cast charlie
+```
+
+```console
+[user@host glob]$ ls ????
+able cast easy echo
+[user@host glob]$ ls ?????
+baker bravo delta
+```
+
+### Expansión de llaves ###
+
+```console
+[user@host glob]$ echo {Sunday,Monday,Tuesday,Wednesday}.log
+Sunday.log Monday.log Tuesday.log Wednesday.log
+[user@host glob]$ echo file{1..3}.txt
+file1.txt file2.txt file3.txt
+[user@host glob]$ echo file{a..c}.txt
+filea.txt fileb.txt filec.txt
+[user@host glob]$ echo file{a,b}{1,2}.txt
+filea1.txt filea2.txt fileb1.txt fileb2.txt
+[user@host glob]$ echo file{a{1,2},b,c}.txt
+filea1.txt filea2.txt fileb.txt filec.txt
+[user@host glob]$ echo file{a{1..3},b,c}.txt
+filea1.txt filea2.txt filea3.txt fileb.txt filec.txt
+```
+
+Se puede usar para crear directorios de forma rápida
+
+```console
+[user@host glob]$ mkdir ../RHEL{7,8,9}
+[user@host glob]$ ls ../RHEL*
+RHEL7 RHEL8 RHEL9
+```
+
+### Expansión de variables ###
+
+Puede asignar datos como valor de una variable se usa  la siguiente sintaxis:
+
+[user@host ~]$ VARIABLENAME=value
+
+Se puede usar la expansión de variables para convertir el nombre de la variable a su valor en la línea
+de comandos. Si una cadena comienza con un signo de dólar ($), entonces la shell intentará usar el
+resto de esa cadena como un nombre de variable y reemplazarlo con el valor de la variable.
+
+```console
+[user@host ~]$ USERNAME=operator
+[user@host ~]$ echo $USERNAME
+operator
+[user@host ~]$ USERNAME=operator
+[user@host ~]$ echo ${USERNAME}
+operator
+```
+
+**Se aconseja poner la variable entre llaves {} después del $ para evitar errores debidos a otras expansiones de shell, puede poner el nombre de la variable**
+**Las variables no pueden empezar por números**
+
+### Sustitución de comandos ###
+
+Se pueden usar la forma $(comando) que se sustituira por la salida del comando encerrado entre parentesis.
+
+```console
+[user@host glob]$ echo Today is $(date +%A).
+Today is Wednesday.
+[user@host glob]$ echo The time is $(date +%M) minutes past $(date +%l%p).
+The time is 26 minutes past 11AM.
+```
+
+>[!NOTE]
+> Para evitar que la shell expanda el siguiente caracter se usa el caracter de barra invertida de escape (\).
+>```console
+>[user@host glob]$ echo The value of $HOME is your home directory.
+>The value of /home/user is your home directory.
+>[user@host glob]$ echo The value of \$HOME is your home directory.
+>The value of $HOME is your home directory.
+>```
+
