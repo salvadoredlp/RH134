@@ -150,6 +150,7 @@ sobrescribirlo.
 
 ##### Visual Mode #####
 
+***i*** Entrar en modo edición
 ***v*** Entrar en modo visual
 ***Ctrl+V*** Seleccionar bloque
 ***Shift+V*** Selección multilinea
@@ -169,10 +170,12 @@ La configuración del usuario para usar Vim se encuentra en
 ***~/.vimrc*** La configuación común para todos los usuarios se encuentra en ***/etc/vimrc
 
 >[!WARNING]
->Configuración para trabajar con ficheros .yml en vim, añadir al ~/.vimrc
-> autocmd FileType yaml,yml setlocal ai ts=2 sw=2 et nu sts=0 cursorline cursorcolumn" >> ~/.vimrc
+> Configuración para trabajar con ficheros .yml en vim, añadir al ~/.vimrc
 > syntax on
 > autocmd fileType yaml setlocal ai ts=2 sw=2 nu et
 > set cul
 > set cuc
 > set title
+>
+
+
