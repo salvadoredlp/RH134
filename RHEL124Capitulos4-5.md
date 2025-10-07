@@ -178,4 +178,110 @@ La configuración del usuario para usar Vim se encuentra en
 > set title
 >
 
+### VARIABLES ###
 
+*Por convención , para los nombres de las variables de entorno son en mayusculas.*
+*Si estamos creando nuestras propias variables de entorno entonces quizas es conveniente usar minusculas para evitar colisiones con las variables de entorno por defecto*
+
+Las variables solo afectan a la shell en la que se ejecuta el comando sin afectar a las
+demás shells que pueda estar ejecutando en ese servidor.
+
+Se puede usar el comando ***set*** para enumerar todas las variables de shell que están configuradas
+actualmente. 
+
+```console
+[user@host ~]$ set | less
+BASH=/bin/bash
+BASHOPTS=checkwinsize:cmdhist:complete_fullquote:expand_aliases:extglob:extquote\
+:force_fignore:globasciiranges:histappend:interactive_comments:login_shell:progc\
+omp:promptvars:sourcepath
+BASHRCSOURCED=Y
+...output omitted...
+```
+Para hacer referencia al contenido de una variable se usa el signo ***$*** seguido del nombre de la variable.
+
+***Se recomineda usar llaves para hacer con el nombre de la variable ${VARIABLE}***
+
+
+#### Variables de la bash ####
+
+***HISTTIMEFORMAT***="%F %T " // Define el formato de sello de tiempo para cada comando en el historial de history
+***PS1***="[\u@\h \W]\$ " // Define el aspecto del prompt, se recomienda poner un espacio al final.
+***HISTFILE*** Especifica en qué archivo se guardará el historial de shell, y se establece de manera predeterminada en el archivo ~/.bash_history. 
+***HISTFILESIZE***=25 Especifica cuántos comandos deben guardarse en ese archivo del historial.
+***LANG***=es_ES.UTF-8
+***PATH***=/home/user/.local/bin:/usr/sbin // Los directorios donde se encuentran los programas.
+  Se puede añadir directorios a PATH ejecutando
+    ```console
+      $ export PATH=${PATH}:/home/user/sbin
+    ```
+
+***EDITOR***=vim // Sirve para especificar el editor por defecto de la shell
+
+      
+***export*** Se usa el comando export para convertir un avariable en una variable de entorno
+    Para deshacer la exportación de una variable sin deshacer la configuración se usa la opción -n
+
+```console
+[user@host ~]$ export EDITOR=vim
+```
+
+***env*** Para listar todas las variables de entorno del shell.
+
+Ficheros para configurar la bash
+
+| Tipo de shell              | Archivos usados                                               |
+|---------------------------|---------------------------------------------------------------|
+| Interactiva + login       | `/etc/profile`, `~/.bash_profile`, `~/.bashrc`               |
+| Interactiva sin login     | `/etc/bashrc`, `~/.bashrc`                                   |
+| No interactiva (scripts)  | Lo que defina la variable `BASH_ENV` (si está configurada)   |
+
+La mejor manera de ajustar la configuración que afecta a todas las cuentas de usuario es agregando un archivo con una extensión .sh que contiene los cambios en el directorio ***/etc/profile.d***. Para crear los archivos en el directorio ***/etc/profile.d***, inicie sesión con el usuario root.
+
+
+***alias*** Es un comando que sirve para crear lo que dice su nombre, alias de otros comandos quizas mas complejos
+  ```console
+      [user@host ~]$ alias hello='echo "Hello, this is a long string."'
+      [user@host ~]$ hello
+      Hello, this is a long string.
+  ```
+
+***unalias*** Para anular la configuración del alias
+
+***unset*** Deshace la configuración y la exportación de una viariable
+```console
+[user@host ~]$ echo $file1
+/tmp/tmp.z9pXW0HqcC
+[user@host ~]$ unset file1
+[user@host ~]$ echo $file1
+[user@host ~]$
+```
+
+### Gestión de usuarios y grupos ###
+
+La cuenta de superusuario es la llamada *root* y su UID es 0
+
+**id** para mostrar información del usuario actual o de cualquier otro **$ id user**
+
+***ps -ua*** Para ver todos los procesos (all) y el usuario asociado a cada uno (user)
+
+Los usuarios y la información asociada a cada uno se encuentra en el fichero ***/etc/passwd***
+
+```console
+[user01@host ~]$ cat /etc/passwd
+...output omitted...
+user01:x:1000:1000:User One:/home/user01:/bin/bash
+```
+
+• user01 : el nombre de usuario para este usuario.
+• x : la contraseña cifrada del usuario se almacenaba históricamente aquí; ahora es un marcador
+de posición.
+• 1000 : el número de UID para esta cuenta de usuario.
+• 1000 : el número de GID para el grupo principal de esta cuenta de usuario. Los grupos se
+analizan más adelante en esta sección.
+• User One : un breve comentario, una descripción o el nombre real de este usuario.
+• /home/user01 : el directorio de inicio del usuario y el directorio de trabajo inicial cuando se
+inicia la shell de inicio de sesión.
+• /bin/bash : el programa de shell predeterminado para este usuario, que se ejecuta al iniciar
+sesión. Algunas cuentas usan la shell /sbin/nologin para no permitir inicios de sesión
+interactivos con esa cuenta.
