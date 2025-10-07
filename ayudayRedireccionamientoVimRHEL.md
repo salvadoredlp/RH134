@@ -141,8 +141,38 @@ sobrescribirlo.
 
 >[!NOTE]
 >Importante
-> Puede redirigir el error estándar por una tubería, pero no puede usar los operadores de redireccionamiento >fusionados (&> y &>>). En el siguiente ejemplo, se muestra la manera correcta de redirigir la salida y el error >estándares a través de una tubería:
+> Puede redirigir el error estándar por una tubería, pero no puede usar los operadores de redireccionamiento fusionados (&> y &>>). En el siguiente ejemplo, se muestra la manera correcta de redirigir la salida y el error >estándares a través de una tubería:
 > ```console
 > [user@host ~]$ find / -name passwd 2>&1 | less
 > ```
->
+
+### VIM ###
+
+##### Visual Mode #####
+
+***v*** Entrar en modo visual
+***Ctrl+V*** Seleccionar bloque
+***Shift+V*** Selección multilinea
+***:*** Entrar en modo extendido
+
+***u*** Undo, deshacer la útima acción realizada
+***x*** Borrar un caracter
+***:w*** Salvar el fichero
+***:wq*** Salvar  salir de Vim
+***!q*** Salir descartando los cambios
+
+***y*** Copiar
+***p*** Pegar
+
+La configuración del usuario para usar Vim se encuentra en 
+
+***~/.vimrc*** La configuación común para todos los usuarios se encuentra en ***/etc/vimrc
+
+>[!WARNING]
+>Configuración para trabajar con ficheros .yml en vim, añadir al ~/.vimrc
+> autocmd FileType yaml,yml setlocal ai ts=2 sw=2 et nu sts=0 cursorline cursorcolumn" >> ~/.vimrc
+> syntax on
+> autocmd fileType yaml setlocal ai ts=2 sw=2 nu et
+> set cul
+> set cuc
+> set title
