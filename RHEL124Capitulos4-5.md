@@ -265,6 +265,7 @@ La cuenta de superusuario es la llamada *root* y su UID es 0
 
 ***ps -ua*** Para ver todos los procesos (all) y el usuario asociado a cada uno (user)
 
+#### Usuarios ####
 Los usuarios y la información asociada a cada uno se encuentra en el fichero ***/etc/passwd***
 
 ```console
@@ -274,14 +275,106 @@ user01:x:1000:1000:User One:/home/user01:/bin/bash
 ```
 
 • user01 : el nombre de usuario para este usuario.
+
 • x : la contraseña cifrada del usuario se almacenaba históricamente aquí; ahora es un marcador
-de posición.
-• 1000 : el número de UID para esta cuenta de usuario.
+de posición.  
+• 1000 : el número de UID para esta cuenta de usuario.  
 • 1000 : el número de GID para el grupo principal de esta cuenta de usuario. Los grupos se
-analizan más adelante en esta sección.
-• User One : un breve comentario, una descripción o el nombre real de este usuario.
+analizan más adelante en esta sección.  
+• User One : un breve comentario, una descripción o el nombre real de este usuario.   
 • /home/user01 : el directorio de inicio del usuario y el directorio de trabajo inicial cuando se
-inicia la shell de inicio de sesión.
+inicia la shell de inicio de sesión.  
 • /bin/bash : el programa de shell predeterminado para este usuario, que se ejecuta al iniciar
 sesión. Algunas cuentas usan la shell /sbin/nologin para no permitir inicios de sesión
-interactivos con esa cuenta.
+interactivos con esa cuenta.  
+
+#### Grupos ####
+
+La información sobre los grupos se encuentra en el fichero ***/etc/groups***
+
+```console
+[user01@host ~]$ cat /etc/group
+...output omitted...
+group01:x:10000:user01,user02,user03
+```
+
+• group01 : nombre para este grupo.  
+• x : campo de contraseña de grupo obsoleto; ahora es un marcador de posición.  
+• 10000 : el número de GID para este grupo (10000).  
+• user01,user02,user03 : una lista de usuarios que son miembros de este grupo como grupo complementario.   
+
+Cuando se crea un usuario regular, se crea un grupo con el mismo nombre que el usuario, para
+que sea el grupo principal para el usuario. El usuario es el único miembro de este grupo privado de usuarios  
+
+Es mejor  iniciar sesión siempre como usuario normal y escalar privilegios a root solo cuando sea necesario.
+
+***su*** sirve para cambiar de usuario 
+  Si usamos su sin poner nombre de usuario nos cambiara a root 
+  Si usamos su con un guión (-) cambiaremos a ese usuario como si hubieramos iniciado sesión con ese usuario
+  Sin el guión (-) el entorno que usaremos con el otro usuario sera el de nuestro usuario.
+
+
+***sudo*** La contraseña que nos pedira sera la nuestra, sirve para cuando el acceso a root esta capado.  
+  ***sudo comando*** ejecutara el comando como root.
+
+Todos los comandos ejecutados con sudo se registran en ***/var/log/secure***
+
+Todos los miembros del grupo **wheel** pueden usar sudo para ejecutar comandos como cualquier usuario, incluido el usuario root, usando su propia contraseña.
+
+Para acceder a la cuenta root se puede usar *sudo -i* *i*nteractive  
+La opción *-s* es para acceder al root sin ejecutar los scripts de inicio del root
+
+#### Configuración de sudo ####
+
+El archivo /etc/sudoers es el archivo de configuración principal del comando sudo. Para evitar problemas si varios administradores intentan editar el archivo al mismo tiempo, se edita con el  comando especial ***visudo***. El editor visudo también valida el archivo para garantizar que no haya errores de sintaxis.
+
+Por ejemplo, la siguiente línea del archivo /etc/sudoers habilita el acceso sudo para miembros del grupo wheel:
+
+```console
+  %wheel ALL=(ALL:ALL) ALL
+```
+
+• La cadena %wheel es el usuario o grupo al que se aplica la regla. El símbolo % antes de la
+palabra wheel especifica un grupo.
+• El comando ALL=(ALL:ALL) especifica que en cualquier host con este archivo (el primer ALL),
+los usuarios en el grupo wheel pueden ejecutar comandos como cualquier otro usuario (el
+segundo ALL) y cualquier otro grupo (el tercero ALL) en el sistema.
+• El comando final ALL especifica que los usuarios en el grupo wheel pueden ejecutar cualquier
+comando.
+
+Tambien se puede hacer agregando el fichero con la configuración que queramos de sudoers en ***/etc/sudoers.d***
+
+##### Ejemplos de configuración de sudoers #####
+
+Para habilitar el acceso sudo completo para el usuario user01, puede crear el archivo /etc/
+sudoers.d/user01 con el siguiente contenido:
+
+```console
+user01 ALL=(ALL) ALL
+```
+
+Para habilitar el acceso sudo completo para el grupo group01, puede crear el archivo /etc/
+sudoers.d/group01 con el siguiente contenido:
+
+```console
+%group01 ALL=(ALL) ALL
+```
+
+Para permitir que los usuarios en el grupo games ejecuten el comando id con el usuario
+operator, puede crear el archivo /etc/sudoers.d/games con el siguiente contenido:
+
+```console
+%games ALL=(operator) /bin/id
+```
+
+También es posible configurar sudo para permitir que un usuario ejecute comandos como otro
+usuario sin ingresar su contraseña, con el comando NOPASSWD: ALL:
+
+```console
+ansible ALL=(ALL) NOPASSWD: ALL
+```
+
+
+### Gestión de usuarios locales ###
+
+página 172 ingles 178 español
