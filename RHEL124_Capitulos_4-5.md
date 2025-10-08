@@ -509,4 +509,28 @@ criptográfico para generar este hash de la contraseña.
 
 ```console
 [root@host ~]# chage -m 0 -M 90 -W 7 -I 14 sysadmin05
-``` 
+
+[root@host ~]# date +%F
+2022-03-10
+[root@host ~]# date -d "+30 days" +%F
+2022-04-09
+[root@host ~]# chage -E $(date -d "+30 days" +%F) cloudadmin10
+[root@host ~]# chage -l cloudadmin10 | grep "Account expires"
+Account expires
+: Apr 09, 2022
+```
+Se puede bloquear un usuario despues de una fecha
+
+```console
+[root@host ~]# usermod -L -e 2022-08-14 cloudadmin10
+```
+
+Para modificar y crear usuarios sin login se usa la opcion ***-s /sbin/nologin***
+
+```console
+[root@host ~]# usermod -s /sbin/nologin newapp
+[root@host ~]# su - newapp
+Last login: Wed Feb 6 17:03:06 IST 2019 on pts/0
+This account is currently not available.
+```
+
