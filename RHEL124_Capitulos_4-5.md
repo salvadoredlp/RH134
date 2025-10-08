@@ -415,3 +415,41 @@ ansible ALL=(ALL) NOPASSWD: ALL
 El software que requiere un UID sin privilegios se asigna dinámicamente desde este conjunto
 disponible.  
 • UID 1000+: el rango de UID para asignar a usuarios regulares sin privilegios.  
+
+#### Gestión de grupos locales ####
+
+***groupadd*** Sirve para crear grupos.
+
+-g especifa un *gid* para que use el grupo.
+
+Al crear un grupo se le asigna el primer  uid mas elevado que el mayor existente aunque exista otro gid disponible. Todo ello  dentro del rango indicado en /etc/login.defs .
+
+-r Sirve para crear los grupos del sistema. los grupos del sistema usan un GID del rango de GID del sistema válidos enumerados en el archivo /etc/login.defs. Los ítems de configuración SYS_GID_MIN y SYS_GID_MAX en el archivo /etc/login.defs definen el rango de GID del sistema.
+    
+    ```console
+        [root@host ~]# groupadd -r group02
+        [root@host ~]# tail /etc/group
+      ...output omitted...
+      group01:x:10000:
+      group02:x:988:
+    ```
+
+#### Modifiación de grupos ####
+
+***groupmod*** Cambia las propiedades de un grupo existente. 
+    -n NOMBRE Indica el nuevo nombre del grupo
+    -g GID Indica el nuevo gid dle grupo
+
+***groupdel*** Sirve para borrar un grupo. **No se puede borrar un grupo si es el grupo principal de un usuario existente**
+
+Para cambiar el grupo principal de un usuario: usermod -g grupo01 user02 . Si se añade  -aG lo que hara sera añadir nuevos grupos a los que pertenece el usuario.
+
+***newgrp*** Sirve para cambiar su grupo primario, en esta sesión de shell. Puede cambiar entre cualquier grupo primario o complementario al que pertenezca, pero solo un grupo a la vez puede ser primario. Su grupo primario vuelve al valor predeterminado si cierra la sesión y vuelve a iniciarla. En este ejemplo, el grupo group01 se convierte temporalmente en el grupo principal de este usuario.
+
+``` console
+[user03@host ~]# id
+uid=1007(user03) gid=1009(user03) groups=1009(user03),10000(group01)
+[user03@host ~]$ newgrp group01
+[user03@host ~]# id
+uid=1007(user03) gid=10000(group01) groups=1009(user03),10000(group01)
+```
