@@ -377,4 +377,41 @@ ansible ALL=(ALL) NOPASSWD: ALL
 
 ### Gestión de usuarios locales ###
 
-página 172 ingles 178 español
+***useradd*** Para añadir usuarios. Los parametros por defecto de los usuarios creados se encuentran en ****/etc/login.defs*** . Useradd asigna el primer uid libre mayor o igual a 1000 a menos que se especifique con la opcion -u
+
+>[!NOTE]
+>Los valores de este archivo afectan solo a las cuentas de usuario creadas recientemente. Un cambio en este archivo >no afectará a los usuarios existentes.
+>
+#### Opciones de useradd ####
+
+-a --append Se usa con la opción -G para agregar grupos complementarios. *Si no se usa machaca los grupos que ya estaban antes*
+
+-c --comment COMMENT grega un cometario al campo de comentarios
+
+-d --home HOME_DIR Especifica el directorio de inicio del usuario.
+
+-g --gid GROUP   Especifica el grupo principal para la cuenta de usuario
+
+-G --groups GROUPS Especifica una lista de grupos complementarios separados por comas para la cuenta de usuario.
+
+-L --lock Bloquear la cuenta de usuario
+
+-m --move-home Mueve el direcotro de inicio del usuario a una nueva ubicación. Debe usarlo con la opción -d
+
+-s --shell SHELL Especificar una shell de inicio de sesión particular para la cuenta de usuario.
+
+-U --unlock  desbloquear la cuenta de usuario.
+
+***userdel*** elimina un usuario de /etc/passwd pero deja su directorio intacto, para eliminar tambien su directorio hay que usar la opción *-r* para evitar que otro usuario que se cree con su mismo uid se haga con el directorio
+
+***passwd*** Cambiar la contraseña de usuario. 
+
+
+#### Rangos de UID ####
+
+• UID 0: el UID de la cuenta de superusuario (root).  
+• UID 1-200: UID de la cuenta del sistema asignados estáticamente a los procesos del sistema.  
+• UID 201-999: UID asignados a procesos del sistema que no poseen archivos en este sistema.  
+El software que requiere un UID sin privilegios se asigna dinámicamente desde este conjunto
+disponible.  
+• UID 1000+: el rango de UID para asignar a usuarios regulares sin privilegios.  
