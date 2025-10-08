@@ -533,4 +533,31 @@ Para modificar y crear usuarios sin login se usa la opcion ***-s /sbin/nologin**
 Last login: Wed Feb 6 17:03:06 IST 2019 on pts/0
 This account is currently not available.
 ```
+### Permisos del sistema de archivos de Linux ###
 
+| Permiso       | Efecto en los archivos                                      | Efecto en los directorios                                                                 |
+|---------------|-------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| `r` (lectura) | Puede leerse el contenido del archivo.                      | El contenido del directorio (nombres de archivo) puede detallarse.                         |
+| `w` (escritura)| Puede cambiarse el contenido del archivo.                  | Cualquier archivo en el directorio puede crearse o eliminarse.                             |
+| `x` (ejecución)| Los archivos pueden ejecutarse como comandos.              | El directorio puede convertirse en el directorio de trabajo actual (`cd`). También se requiere permiso de lectura para enumerar los archivos que se encuentran allí. |
+
+```console
+[user@host ~]$ ls -ld /home
+drwxr-xr-x. 5 root root 4096 Feb 31 22:00 /home
+```
+
+El primer carácter del listado extenso representa el tipo de archivo, que se interpreta de la
+siguiente manera:
+
+• - es un archivo regular.  
+• d es un directorio.  
+• l es un enlace simbólico.  
+• c es un archivo de dispositivo de caracteres.  
+• b es un archivo de dispositivo de bloque.  
+• p es un archivo de tubería nombrado.  
+• s es un archivo de socket local  
+
+El comando ***ls*** con la opción ***-a*** muestra los permisos ocultos.
+
+
+Página 217 208
