@@ -559,5 +559,88 @@ siguiente manera:
 
 El comando ***ls*** con la opción ***-a*** muestra los permisos ocultos.
 
+#### Cambiar permisos metodo simbólico ####
 
-Página 217 208
+***chmod*** who/what/which file|directory
+
+u - user   g - group o - other a - all 
++ add - remove = set exactly
+r - read  w - write x - execute
+X - special eXecute Permisos de ejecución para un directorio o permisos de ejecución cpara un archivo si tiene establecido al menos uno de los bits de ejecución
+
+##### Ejemplos #####
+
+```console
+[user@host ~]$ chmod go-rw document.pdf
+
+[user@host ~]$ chmod a+x myscript.sh
+
+[user@host ~]$ chmod -R g+rwx /home/user/myfolder
+
+```
+
+#### Metodo octal ####
+
+chmod ### file|directory
+
+421  = 4 + 2 + 1 = 7
+ugo  UserGroupOthers
+
+##### Ejemplos #####
+
+```console
+[user@host ~]$ chmod 644 sample.txt
+
+[user@host ~]$ chmod 750 sampledir
+
+```
+
+***chown*** Sirve para cambiar la propiedad de un fichero.
+
+La opción -R lo aplica de forma recursiva a todo los archivos y subdirectorios del directorio.
+
+```console
+[root@host ~]# chown -R student Pictures
+
+```
+
+Se puede usar lar forma ***$chown user:grupo Directorio|fichero***
+
+***chgrp*** Funciona de forma similar a chown excepto que solo puede cambiar el grupo .
+
+Solo el usuario root puede cambiar el usuario que es propietario de un archivo. Sin embargo, el propietario del archivo y el usuario root pueden establecer la propiedad del grupo. El usuario root puede otorgar propiedad del archivo a cualquier grupo, pero los usuarios regulares SOLO pueden cambiar la propiedad del grupo del archivo si son miembros del grupo de destino.
+
+### Permisos especiales ###
+
+| Permiso | Efecto en los archivos | Efecto en los directorios |
+|---------|-------------------------|----------------------------|
+| `u+s` (suid) | El archivo se ejecuta con el usuario propietario del archivo, no con el usuario que lo ejecutó. | No hay efectos. |
+| `g+s` (sgid) | El archivo se ejecuta como el grupo propietario. | Los archivos creados en el directorio tienen como grupo propietario el mismo grupo del directorio. |
+| `o+t` (sticky) | No hay efectos. | Los usuarios con acceso de escritura en el directorio solo pueden eliminar los archivos de los que son propietarios, pero no pueden eliminar ni modificar archivos de otros usuarios. |
+
+El sticky bit se visualiza con una t minuscula o una T mayuscula (en caso de que no tenga permiso de ejecución en la parte de otros) 
+El sgid y suid se representa con una s en la parte de grupo el sgid y en la parte de usuario el sid.
+
+```console
+[user@host ~]$ ls -ld /tmp
+drwxrwxrwt. 39 root root 4096 Feb 8 20:52 /tmp
+
+[user@host ~]$ ls -ld /usr/bin/locate
+-rwx--s--x. 1 root slocate 47128 Aug 12 17:17 /usr/bin/locate
+
+[user@host ~]$ ls -ld /run/log/journal
+drwxr-sr-x. 3 root systemd-journal 60 May 18 09:15 /run/log/journal
+
+```
+***Para establecer los permisos especiales***
+
+• Simbólico: setuid = u+s; setgid = g+s; sticky = o+t  
+• Octal: En el cuarto dígito anterior añadido; setuid = 4; setgid = 2; sticky = 1  
+
+Para el metodo octal hay que agregar un 0 adicional al comienzo del valor.
+
+```console
+[user@host ~]# chmod 00770 example
+```
+
+***umask*** Para establecer la mascara de creación de ficheros. Tambien se puede establecer en */etc/login.defs* y /etc/bashrc o de los usuarios en .bash_profile , .bashrc
