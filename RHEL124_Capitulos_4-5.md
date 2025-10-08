@@ -426,13 +426,13 @@ Al crear un grupo se le asigna el primer  uid mas elevado que el mayor existente
 
 -r Sirve para crear los grupos del sistema. los grupos del sistema usan un GID del rango de GID del sistema válidos enumerados en el archivo /etc/login.defs. Los ítems de configuración SYS_GID_MIN y SYS_GID_MAX en el archivo /etc/login.defs definen el rango de GID del sistema.
     
-    ```console
-        [root@host ~]# groupadd -r group02
-        [root@host ~]# tail /etc/group
-      ...output omitted...
-      group01:x:10000:
-      group02:x:988:
-    ```
+  ```console
+   [root@host ~]# groupadd -r group02
+   [root@host ~]# tail /etc/group
+   ...output omitted...
+   group01:x:10000:
+   group02:x:988:
+  ``
 
 #### Modifiación de grupos ####
 
