@@ -453,3 +453,60 @@ uid=1007(user03) gid=1009(user03) groups=1009(user03),10000(group01)
 [user03@host ~]# id
 uid=1007(user03) gid=10000(group01) groups=1009(user03),10000(group01)
 ```
+
+Las contraseñas se guardan en el fichero /etc/shadow que solo **root** puede leer.
+
+Al igual que el archivo /etc/passwd, cada usuario tiene una entrada en el archivo /etc/shadow.
+Una entrada de ejemplo del archivo /etc/shadow tiene nueve campos separados por dos
+puntos:
+```console
+[root@host ~]# cat /etc/shadow
+...output omitted...
+user03:$6$CSsXsd3rwghsdfarf:17933:0:99999:7:2:18113:
+```
+
+Cada campo de este bloque de código está separado por dos puntos:
+
+• user03 : nombre de la cuenta de usuario.  
+• $6$CSsXsd3rwghsdfarf : la contraseña con hash criptográfico del usuario.  
+• 17933 : días desde la época en que se cambió la contraseña por última vez, donde la época es
+1970-01-01 en la zona horaria UTC.  
+• 0 : la cantidad mínima de días que deben transcurrir desde el último cambio de contraseña antes
+de que el usuario pueda volver a cambiarla.  
+• 99999 : la cantidad máxima de días sin un cambio de contraseña antes de que la contraseña
+caduque. Un campo vacío significa que la contraseña nunca caduca.  
+• 7 : la cantidad de días para advertir al usuario que su contraseña caducará.  
+• 2 : la cantidad de días sin actividad, comenzando con el día en que caducó la contraseña, antes
+de que la cuenta se bloquee automáticamente.  
+• 18113 : el día en que la cuenta caduca en días desde la época. Un campo vacío significa que la
+cuenta nunca caduca.  
+• Por lo general, el último campo está vacío y se reserva para su uso en el futuro.
+Formato de una contraseña con hash criptográfico  
+
+El campo de contraseña con hash criptográfico almacena tres datos: el algoritmo de hash
+usado, el valor aleatorio y el hash criptográfico. El valor aleatorio agrega datos aleatorios al hash
+criptográfico, para crear un hash único para fortalecer la contraseña con hash criptográfico. Cada
+dato está delimitado por el signo del dólar ($).
+
+```
+$6$CSsXcYG1L/4ZfHr/$2W6evvJahUfzfHpc9X.45Jc6H30E
+```
+• 6 : el algoritmo de hash usado para esta contraseña. Un 6 indica un hash SHA-512, el RHEL 9
+predeterminado, un 1 indica MD5 y un 5 indica SHA-256.  
+• CSsXcYG1L/4ZfHr/ : el valor aleatorio en uso para aplicar hash criptográfico a la contraseña;
+se elige originalmente al azar.  
+• 2W6evvJahUfzfHpc9X.45Jc6H30E : el hash criptográfico de la contraseña del usuario; se
+combinan el valor aleatorio y la contraseña de texto sin formato y, luego, se aplica un hash
+criptográfico para generar este hash de la contraseña.  
+
+#### vigencia de contraseñas ####
+
+***chage*** Sirve para cambiar la vigencia de las contraseñas. 
+  -m antigüedad minima
+  -M vigencia máxima
+  -W periodo de advertencia
+  -I periodo de inactividad
+
+```console
+[root@host ~]# chage -m 0 -M 90 -W 7 -I 14 sysadmin05
+``` 
