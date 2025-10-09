@@ -141,7 +141,7 @@ Para terminar trabajos ***kill -SIGTERM %Número de trabajo mostrado con el coma
 
 ***lscpu*** Nos muestra las cpus disponibles, si dividimos los últimos tres numeros de uptime entrre el número de cpus nos dara la carga del sistema. 
             Por encima de 1 indica saturación de recursos
-
+```console
 # From lscpu, the system has four logical CPUs, so divide by 4:
 # load average:                   2.92, 4.48, 5.20
 # divide by number of logical CPUs: 4     4     4
@@ -152,6 +152,7 @@ Para terminar trabajos ***kill -SIGTERM %Número de trabajo mostrado con el coma
 # With a load average of 2.92 on four CPUs, all CPUs were in use ~73% of the time.
 # During the last 5 minutes, the system was overloaded by ~12%.
 # During the last 15 minutes, the system was overloaded by ~30%
+```
 
 #### top #### 
 
@@ -159,7 +160,7 @@ Permite el monitoreo en tiempo real de los procesos
 
 ***Teclas para su manejo*** 
 
-## Atajos interactivos de `top`
+##### Atajos interactivos de `top` #####
 
 | Tecla        | Acción                                                                 |
 |--------------|------------------------------------------------------------------------|
@@ -178,7 +179,23 @@ Permite el monitoreo en tiempo real de los procesos
 | `q`          | Salir                                                                  |
 | `f`          | Gestionar columnas y configurar campo de ordenamiento                 |
 
+### Daemons del sistema ###
 
+Por convención su nombre termina en d. El primer proceso del sistema es el systemd y tiene PID 1.
 
+El daemon systemd usa unidades para gestionar diferentes tipos de objetos:
+
+• Las unidades de servicio tienen una extensión .service y representan servicios del sistema.
+Puede usar unidades de servicio para iniciar los daemons usados con más frecuencia, como un
+servidor web.
+
+• Las unidades de socket tienen una extensión .socket y representan sockets de comunicación entre procesos (IPC) que systemd debe monitorear.
+Si un cliente se conecta al socket, el gerente systemd iniciará un daemon y le pasará la conexión. Puede usar unidades socket para demorar el inicio de un servicio en el momento del arranque y para iniciar servicios usados con menos frecuencia a pedido.
+
+• Las unidades de ruta tienen una extensión .path y se usan para demorar la activación de un servicio hasta que ocurra un cambio en el sistema de archivos específico. Puede usar unidades de ruta para servicios que usan directorios de cola, como un sistema de impresión.
+
+Para gestionar unidades, use el comando systemctl. Por ejemplo, el comando ***systemctl -t help*** permite visualizar los tipos de unidad disponibles. El comando systemctl puede abreviar los nombres de las unidades, las entradas de árbol de proceso y las descripciones de unidad.
+
+***systemctl list-units --type=service*** enumera y ordena las páginas de todas las unidades de servicio cargadas actualmente.
 
 
