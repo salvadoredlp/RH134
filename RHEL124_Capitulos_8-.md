@@ -19,6 +19,7 @@
 ***ps aux**** muestra todos los  procesos sin un terminal de control
 ***ps lax*** muestra una lista extensa de todos los procesos
 ***ps aux --forest*** Para mostrar los procesos dependientes de otros en forma de arbol
+***ps j*** Muestra solo los rabajos en marcha
 
 #### Control de los procesos ####
 
@@ -40,5 +41,39 @@ Cualquier comando o tubería puede iniciarse en segundo plano si se anexa el sig
 
 ***jobs*** Muestra una lista de trabajos de la shell
 
-página 254 y 242
+```console
+[user@host ~]$ jobs
+[1]+ Running
+sleep 10000 &
+[user@host ~]$
+```
+
+**fg*** Para traer un trabajo desde segundo plano a primer plano
+
+```console
+[user@host ~]$ fg %1
+sleep 10000
+```
+
+***bg*** Para poner un trabajo en segundo plano
+
+```
+user@host ~]$ bg %1
+[1]+ sleep 10000 &
+```
+
+#### Control de procesos con señales ####
+
+# Señales fundamentales de gestión de procesos
+
+| Señal | Nombre           | Definición                                                                                                                                                     |
+|-------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1     | HUP (Hangup)     | Se usa para informar la finalización del proceso de control de un terminal. Además, solicita que se reinicie el proceso (volver a cargar la configuración) sin finalización. |
+| 2     | INT (Keyboard interrupt) | Provoca la finalización del programa. Puede bloquearse o manipularse. Enviado al presionar la secuencia de teclas INTR (Ctrl+c).                        |
+| 3     | QUIT (Keyboard quit)     | Similar a SIGINT, pero añade el volcado de un proceso en la finalización. Se envía al presionar la secuencia de teclas QUIT (Ctrl+\).                   |
+| 9     | KILL (Kill, unblockable) | Provoca la finalización abrupta del programa. No se puede bloquear, ignorar ni manipular; sistemáticamente es grave.                                     |
+| 15    | TERM (Terminate)         | Provoca la finalización del programa. A diferencia de SIGKILL, puede bloquearse, ignorarse o manipularse. Permite que el programa complete operaciones esenciales y autolimpieza. |
+| 18    | CONT (Continue)          | Se envía a un proceso para que se reinicie, en caso de que esté detenido. No puede bloquearse. Aún si se manipula, reinicia siempre el proceso.         |
+| 19    | STOP (Stop, unblockable) | Suspende el proceso. No puede bloquearse o manipularse.                                                                                                 |
+| 20    | TSTP (Keyboard stop)     | A diferencia de SIGSTOP, puede bloquearse, ignorarse o manipularse. Enviado al presionar una secuencia de teclas de suspensión (Ctrl+z).              |
 
