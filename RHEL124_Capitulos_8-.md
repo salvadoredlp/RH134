@@ -230,8 +230,90 @@ Para comprobar los demonios  se pueden usar
 ***systemctl is-enabled nombre.service***
 ***systemctl is-failed nombre.service***
 
+***systemctl start nombre.service*** Iniciar demonio, se ejecuta como root
+***systemctl stop nombre.service*** Parar demonio , se ejecuta como root
+***systemctl restart nombre.service*** Reiniciar demonio
+***systemctl reload nombre.service*** Recargar la configuración del demonio para que los cambios surtan efecto
+***systemctl list-dependencies sshd.service*** Visualizar una lista de dependencias para iniciar la unidad de servicio indicada
+***systemctl --reverse list-dependencies*** Visualiza de que serivicos depende cada uno para iniciarse
+
+***systemctl mask nombre.service*** Enmascara el servicio para evitar que se inicie por error. Dara error si se intenta iniciar un servicio enmascarado
+***systemctl umask nombre.servico*** Para quitar el enmascaramiento
+
+
+***systemctl reload-or-restart nombre.service*** Si no estamos seguros si el demonio necesita hacer reload antes de reiniciar.
+
+***systemctl enable nombre.service*** Para indicar que se inicie ese servicio en cada inicio del sistema
+***systemctl enable --now nombre.service*** Para iniciar el servicio e indicar que se inicie cada vez que se reinicia el sistema
+    Crea un fichero en /systemd/system/ y su configuración estara en /etc/systemd/system/TARGETNAME.target.wants
+***systemctl disable nombre.servicio*** Para desahabilitar el inicio en cada reinicio del sistema.
+
+***systemctl is-enabled nombre.service*** Para comprobar si un servicio esta habitlitado el reinicio automatico 
+
 Para enumerar todas los demonios que han fallado ***systemctl --failed --type=service***
 
-pagína 304 y 300
+### SSH ### 
+
+***ssh USER@NOMBREHOST*** Si no se pone usuario y solo se pone HOST se asume el usuario que se esta usando
+
+***w -f*** No muestra una lista de los usuarios conectados por ssh
+
+Las claves públicas del host donde nos conectamos o se guardan en ***~/.ssh/known_hosts*** o en ***/etc/ssh/ssh_know_hosts***
+
+El parámetro *StrictHostKeyChecking* se establece en el archivo *~/.ssh/config* específico del usuario, en el archivo /etc/ssh/ssh_config de todo el sistema o especificando la opción - o StrictHostKeyChecking= del comando ssh. 
+
+• Si el parámetro StrictHostKeyChecking se establece en yes, el comando ssh siempre interrumpe la conexión SSH cuando las claves públicas no coinciden.  
+
+• Si el parámetro StrictHostKeyChecking se establece en no, el comando ssh habilita la conexión y agrega la clave del host de destino al archivo ~/.ssh/known_hosts.
+
+Cada entrada de clave de host conocida consta de una línea que contiene tres campos:
+
+• El primer campo es una lista de nombres de host y direcciones IP que comparten la clave
+pública.
+• El segundo campo es el algoritmo de cifrado que se usa para la clave.
+• El último campo es la clave en sí.
+
+```console
+[developer1@host ~]$ cat ~/.ssh/known_hosts
+server1 ssh-ed25519
+AAAAC3NzaC1lZDI1NTE5AAAAIOmiLKMExRnsS1g7OTxMsOmgHuUSGQBUxHhuUGcv19uT
+server1 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC8WDOooY+rh6NPa9yhLsNQXBqcQknTL/
+WSd3zPvHLLd7KaC4IiEUxnwbfLBit8tRcirbQFxO20Am
+...output omitted...
+```
+
+Un host puede haber cambiado su clave pública, en ese caso sera necesario quitar la llave de ese host de nuestro ~/.ssh/known_hosts para que vuelva a cogerla
+En caso de que la haya cambiado nos saldra este mensaje
+
+```console
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@
+WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+@
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+SHA256:hxttxb/qVi1/ycUU2wXF6mfGH++Ya7WYZv0r+tIkg4I.
+Please contact your system administrator.
+Add correct host key in /home/user/.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /home/user/.ssh/known_hosts:12
+ECDSA host key for server1.example.com has changed and you have requested strict
+checking.
+Host key verification failed.
+```
+
+No indica el número de linea en el fichero donde teniamos la clave , ese sera lo que tenomos que borrar.
+
+Tambien lo podremos borrar con el comando ssh-keygen
+
+```console
+[developer1@host ~]$ ssh-keygen -R remotesystemname -f ~/.ssh/known_hosts
+# Host remotesystemname found: line 12
+/home/user/.ssh/known_hosts updated.
+Original contents retained as /home/user/.ssh/known_hosts.old
+``` 
+
 
 
