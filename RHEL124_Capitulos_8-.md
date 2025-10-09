@@ -82,6 +82,8 @@ user@host ~]$ bg %1
 
 ***kill -l*** Muestra un listado de las señales que existen
 
+*** Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)***
+
 Enviar una señal a un proceso 
 
 ```console
@@ -135,7 +137,48 @@ Enviar una señal a un proceso
 
 Para terminar trabajos ***kill -SIGTERM %Número de trabajo mostrado con el comando jobs***
 
+***uptime*** Nos muestra una promedio de la carga actual , tiempo de funcionamiento y sesiones de usuario. Los tres últimos valores de carga son los calculados hace 1 min 5 min y 15 min.
+
+***lscpu*** Nos muestra las cpus disponibles, si dividimos los últimos tres numeros de uptime entrre el número de cpus nos dara la carga del sistema. 
+            Por encima de 1 indica saturación de recursos
+
+# From lscpu, the system has four logical CPUs, so divide by 4:
+# load average:                   2.92, 4.48, 5.20
+# divide by number of logical CPUs: 4     4     4
+#                                  ---- ---- ----
+# per-CPU load average:            0.73 1.12 1.30
+#
+# This system's load average appears to be decreasing.
+# With a load average of 2.92 on four CPUs, all CPUs were in use ~73% of the time.
+# During the last 5 minutes, the system was overloaded by ~12%.
+# During the last 15 minutes, the system was overloaded by ~30%
+
+#### top #### 
+
+Permite el monitoreo en tiempo real de los procesos
+
+***Teclas para su manejo*** 
+
+## Atajos interactivos de `top`
+
+| Tecla        | Acción                                                                 |
+|--------------|------------------------------------------------------------------------|
+| `l`, `t`, `m`| Alternar carga, subprocesos y líneas de encabezado de memoria         |
+| `1`          | Mostrar CPUs individuales o resumen total en el encabezado            |
+| `s`          | Cambiar tasa de actualización (ej. 0.5, 1, 5 segundos)                |
+| `b`          | Alternar resaltado reverso para procesos en ejecución (negrita por defecto) |
+| `Shift+b`    | Activar negrita en encabezado y procesos en ejecución                 |
+| `Shift+h`    | Alternar entre resumen de proceso y subprocesos individuales          |
+| `u`, `Shift+u`| Filtrar por nombre de usuario (eficaz o real)                        |
+| `Shift+m`    | Ordenar por uso de memoria (descendente)                              |
+| `Shift+p`    | Ordenar por uso de CPU (descendente)                                  |
+| `k`          | Eliminar proceso (ingresar PID y signal)                              |
+| `r`          | Renice proceso (ingresar PID y nice_value)                            |
+| `Shift+w`    | Guardar configuración actual para el próximo reinicio de `top`        |
+| `q`          | Salir                                                                  |
+| `f`          | Gestionar columnas y configurar campo de ordenamiento                 |
 
 
 
-*** Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)
+
+
