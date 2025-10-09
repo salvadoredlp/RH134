@@ -154,11 +154,9 @@ Para terminar trabajos ***kill -SIGTERM %Número de trabajo mostrado con el coma
 # During the last 15 minutes, the system was overloaded by ~30%
 ```
 
-#### top #### 
+***top*** Permite el monitoreo en tiempo real de los procesos
 
-Permite el monitoreo en tiempo real de los procesos
-
-***Teclas para su manejo*** 
+***Teclas para el manejo de top*** 
 
 ##### Atajos interactivos de `top` #####
 
@@ -197,5 +195,43 @@ Si un cliente se conecta al socket, el gerente systemd iniciará un daemon y le 
 Para gestionar unidades, use el comando systemctl. Por ejemplo, el comando ***systemctl -t help*** permite visualizar los tipos de unidad disponibles. El comando systemctl puede abreviar los nombres de las unidades, las entradas de árbol de proceso y las descripciones de unidad.
 
 ***systemctl list-units --type=service*** enumera y ordena las páginas de todas las unidades de servicio cargadas actualmente.
+***systemctl list-units --type=service --all --state=*** enumera todos los servicos independientemente de su estado , sin --all muestra solo los cargados. state= puedes poner LOAD ACTIVE O SUB
+
+***systemctl status nombre.service*** Para ver el estado en el que se encuentra un servico
+
+***Información de la unidad de servicio***
+
+| Campo       | Descripción                                                                 |
+|-------------|------------------------------------------------------------------------------|
+| Loaded      | Indica si la unidad de servicio está cargada en la memoria                  |
+| Active      | Muestra si el servicio está activo y desde cuándo                           |
+| Docs        | Enlaces o rutas donde encontrar documentación del servicio                  |
+| Main PID    | ID del proceso principal del servicio y el comando asociado                 |
+| Status      | Información adicional sobre el estado del servicio                          |
+| Process     | Detalles sobre procesos secundarios relacionados                            |
+| CGroup      | Información sobre el grupo de control (cgroup) al que pertenece el servicio |
+
+***Estados de servicio en la salida de systemctl***
+
+| Estado             | Descripción                                                                 |
+|--------------------|------------------------------------------------------------------------------|
+| loaded             | El archivo de configuración de la unidad fue procesado correctamente        |
+| active (running)   | El servicio está en ejecución con procesos activos                          |
+| active (exited)    | El servicio se ejecutó una vez y terminó correctamente                      |
+| active (waiting)   | El servicio está activo pero esperando un evento                            |
+| inactive           | El servicio no está en ejecución                                             |
+| enabled            | El servicio está configurado para iniciarse al arrancar el sistema          |
+| disabled           | El servicio no se inicia automáticamente al arrancar                        |
+| static             | El servicio no puede habilitarse directamente, pero puede iniciarse por dependencia |
+
+Para comprobar los demonios  se pueden usar 
+
+***systemctl is-active nombre.service***
+***systemctl is-enabled nombre.service***
+***systemctl is-failed nombre.service***
+
+Para enumerar todas los demonios que han fallado ***systemctl --failed --type=service***
+
+pagína 304 y 300
 
 
