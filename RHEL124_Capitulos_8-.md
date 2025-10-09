@@ -64,7 +64,6 @@ user@host ~]$ bg %1
 
 #### Control de procesos con señales ####
 
-# Señales fundamentales de gestión de procesos
 
 | Señal | Nombre           | Definición                                                                                                                                                     |
 |-------|------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -77,3 +76,66 @@ user@host ~]$ bg %1
 | 19    | STOP (Stop, unblockable) | Suspende el proceso. No puede bloquearse o manipularse.                                                                                                 |
 | 20    | TSTP (Keyboard stop)     | A diferencia de SIGSTOP, puede bloquearse, ignorarse o manipularse. Enviado al presionar una secuencia de teclas de suspensión (Ctrl+z).              |
 
+***(Ctrl+z)*** Suspender
+***(Ctrl+c)*** Finalizar
+***(Ctrl+\)*** Volcado
+
+***kill -l*** Muestra un listado de las señales que existen
+
+Enviar una señal a un proceso 
+
+```console
+[user@host ~]$ kill -l
+[user@host ~]$ ps aux | grep job
+[user@host ~]$ kill 5194
+[user@host ~]$ ps aux | grep job
+[user@host ~]$ kill -9 5199
+[user@host ~]$ ps aux | grep job
+[user@host ~]$ kill -SIGTERM 5205
+```
+
+***pkill*** Para enviar una señal a varios procesos que siguen un criterio de selección
+***pgrep*** Enumera los procesos según un criterio, no envia señales
+  ***-l*** Enumera los procesos y sus ids
+  ***-u*** Enumerar los procesos según un ID de usuario
+  ***-t*** Todos los procesos de un terminal determinado
+
+```console
+[root@host ~]# pgrep -l -u bob
+6964 bash
+6998 sleep
+6999 sleep
+7000 sleep
+// Elimina todos los procesos de ese usuario
+[root@host ~]# pkill -SIGKILL -u bob
+[root@host ~]# pgrep -l -u bob
+// Todos los procesos del terminal3
+[root@host ~]# pkill -SIGKILL -t tty3
+[root@host ~]# pgrep -l -u bob
+```
+
+***w*** Nos dice que usuarios estan conectados y a que terminal
+  ***-f*** Nos muestra desde donde estan conectados
+
+***pstree*** Nos muestra los procesos en forma de arbol diciendo de quien depende cada proceso
+
+***killall*** Puede señalar varios procesos basados en el nombre del comando que lo genero
+
+```console
+[user@host ~]$ ps aux | grep job
+5194 0.0 0.1 222448 2980 pts/1 S 16:39 control job1
+5199 0.0 0.1 222448 3132 pts/1 S 16:39 control job2
+5205 0.0 0.1 222448 3124 pts/1 S 16:39 control job3
+5430 0.0 0.0 221860 1096 pts/1 S+ 16:41 
+[user@host ~]$ killall control
+[1]Terminated control job1
+[2]- Terminated control job2
+[3]+ Terminated control job3
+```
+
+Para terminar trabajos ***kill -SIGTERM %Número de trabajo mostrado con el comando jobs***
+
+
+
+
+*** Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)
