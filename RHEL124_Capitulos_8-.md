@@ -315,5 +315,102 @@ Tambien lo podremos borrar con el comando ssh-keygen
 Original contents retained as /home/user/.ssh/known_hosts.old
 ``` 
 
+#### Generación de claves SSH ####
+
+El comando ssh-keygen  se usa para crear un par de claves. De manera predeterminada, el comando ssh-keygen guarda sus claves privadas y públicas en los archivos ~/.ssh/id_rsa y ~/.ssh/id_rsa.pub, pero puede especificar un nombre diferente. Se puede elegir una frase para generar la clave o no poner ninguna.
+
+```console
+[user@host ~]$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/user/.ssh/id_rsa): Enter
+Created directory '/home/user/.ssh'.
+Enter passphrase (empty for no passphrase): Enter
+Enter same passphrase again: Enter
+Your identification has been saved in /home/user/.ssh/id_rsa.
+Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+The key fingerprint is:
+SHA256:vxutUNPio3QDCyvkYm1 user@host.lab.example.com
+The key's randomart image is:
++---[RSA 2048]----+|
+|                  |
+| .      .         |
+| o o o            |
+| . = o o .        |
+| o + = S E .      |
+| ..O o + * +      |
+|.+% O . + B .     |
+|=*oO . . + *      |
+|++. . +.          |
++----[SHA256]-----+
+```
+Para elegir el nombre donde se guardara la clave privada se usa la opción -f
+
+```
+[user@host ~]$ ssh-keygen -f .ssh/key-with-pass
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase): your_passphrase
+Enter same passphrase again: your_passphrase
+Your identification has been saved in .ssh/key-with-pass.
+Your public key has been saved in .ssh/key-with-pass.pub.
+The key fingerprint is:
+SHA256:w3GGB7EyHUry4aOcNPKmhNKS7dl1YsMVLvFZJ77VxAo user@host.lab.example.com
+The key's randomart image is:
++---[RSA 2048]----
+```
+La clave privada se guarda con permisos 600 y la pública con permisos 644 , se suelen guardar en el subdirectorio .ssh del home del usuario que las crea
+
+Para compartir nuestra llave públiica a un host usaremos ***ssh-copy-id user@host*** , usaremos -i en caso de querer indicar donde estan ubicadas .
+
+```console
+[user@host ~]$ ssh-copy-id -i .ssh/key-with-pass.pub user@remotehost
+/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/user/.ssh/
+id_rsa.pub"
+/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter
+out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted
+now it is to install the new keys
+user@remotehost's password: redhat
+Number of key(s) added: 1
+Now try logging into the machine, with:
+"ssh 'user@remotehost'"
+and check to make sure that only the key(s) you wanted were added.
+```
+#### Admistrado de claves ####
+
+Para inicar el admistrado de claves ***ssh-agent*** 
+
+```console
+[user@host ~]$ eval $(ssh-agent)
+Agent pid 10155
+``` 
+
+Para añadir claves en el gestor de claves se usa el comando ssh-add si no le indicamos de donde lo cogeraa del sitio por defecto ~/.ssh/id_rsa
+
+```console
+[user@host ~]$ ssh-add
+Identity added: /home/user/.ssh/id_rsa (user@host.lab.example.com)
+[user@host ~]$ ssh-add .ssh/key-with-pass
+Enter passphrase for .ssh/key-with-pass: your_passphrase
+Identity added: .ssh/key-with-pass (user@host.lab.example.com)
+```
+
+Cuando se cierra sessión las claves almacenadas en caché por ssh-agent se borran de la memoria.
+
+***sh -v user@host*** Se puede usar la opción -v -vv -vvv para ver los problemas al realizar una conexión ssh
+
+La configuración de ssh se guarda en ***~/.ssh/config*** , ahi se configuran parametros para la conexión con cada host
+
+```console
+[user@host ~]$ cat ~/.ssh/config
+host         servera
+HostName       servera.example.com
+User           usera
+IdentityFiles   ~/.ssh/id_rsa_servera
+
+host         serverb
+HostName     serverb.example.com
+User         userb
+IdentityFiles ~/.ssh/id_rsa_serverb
+```
 
 
