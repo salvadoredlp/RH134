@@ -413,4 +413,157 @@ User         userb
 IdentityFiles ~/.ssh/id_rsa_serverb
 ```
 
-página 325 y 342
+#### Configurar el servidor OpenSSH ####
+
+Se configura editando el fichero ***/etc/ssh/sshd_config***
+
+El servidor OpenSSH usa la configuración PermitRootLogin en el archivo /etc/ssh/ sshd_config para permitir o prohibir a los usuarios que inicien sesión en el sistema con el usuario root como en el siguiente ejemplo:
+
+```console
+PermitRootLogin yes
+```
+
+Luego habra que recargar ***systemctl reload sshd*** el daemon sshd para que tenga efecto 
+
+El servidor OpenSSH usa el parámetro PasswordAuthentication en el archivo /etc/ssh/ sshd_config para controlar si los usuarios pueden usar la autenticación basada en contraseñas cuando inician sesión en el sistema.
+
+```console
+PasswordAuthentication yes
+```
+
+### Redes ### 
+
+Los puertos conocidos y registrados se encuentran en /etc/services
+
+Los nombres de la interfaz de red comienzan con el tipo de interfaz:
+• Las interfaces de Ethernet comienzan con en.  
+• Las interfaces WLAN comienzan con wl.  
+• Las interfaces WWAN comienzan con ww.  
+
+El prefijo de red puede ser de 8 bits (clase A), 16 bits (clase B) o 24 bits (clase C).
+
+Puede usar el comando ip addr show para recuperar la dirección de enlace-local IPv6, la opción -br para obtener una lista de direcciones solamente.
+
+```console
+[user@host ~]$ ip addr show dev eth0
+3: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group
+default qlen 1000
+link/ether 52:54:00:01:fa:0a brd ff:ff:ff:ff:ff:ff
+inet 10.42.0.1/16 brd 10.42.255.255 scope global noprefixroute eth0
+valid_lft forever preferred_lft forever
+inet6 fe80::7418:cf98:c742:3681/64 scope link noprefixroute
+valid_lft forever preferred_lft forever
+
+[user@host ~]$ ip -br addr show dev eth0
+eth0 UP 10.42.0.1/16 fe80::7418:cf98:c742:3681/64
+```
+
+La configuración de servidor de nombres se obtiene a traves de DHCP o mediante la creación de una configuración de dirección estática den el archivo ***/etc/resolv.conf***
+
+***ip link show*** Nos muestra todas las interfaces de red de las que disponemos.
+***ip addr show nombre deldispositivo*** No sirve para ver las direcciones de red que estan asociadas a ese dispositivo.
+
+***ip -s link show dispositivo*** Para ver estadisticas de paquetes recibidos y transmitidos
+
+***ping nºip*** Para probar la conectividad con un host, se corta pulsando ctrl+c y se puede limitar el número de paquetes de prueba a enviar con ***-cnº***
+
+***ip route*** Sirve para mostrar información de la tabla de enrutamiento
+***tracepath access.linux.com*** Para rastrear la ruta del trafico de la red
+***tracepath6 y traceroute -6*** son los comandos de IPv6 equivalentes a los comandos tracepath y traceroute.
+
+***ss y netstat*** ss es el sustituto de netstat, sirven para mostrar estadisticas de los sockets abiertos para la comunicación.
+
+#### Opciones para `ss` y `netstat` ####
+
+| Opción     | Descripción |
+|------------|-------------|
+| `-n`       | Muestra números en lugar de nombres para las interfaces y los puertos. |
+| `-t`       | Muestra los sockets TCP. |
+| `-u`       | Muestra los sockets UDP. |
+| `-l`       | Muestra solo los sockets a los que está atento. |
+| `-a`       | Muestra todos los sockets (los que escucha y los establecidos). |
+| `-p`       | Muestra el proceso que usa los sockets. |
+| -A inet   | Muestra las conexiones activas (pero no los sockets que se escuchan) para la familia de direcciones `inet`. Ignora los sockets de dominio UNIX local. Para el comando `ss`, se muestran las conexiones IPv4 e IPv6. Para el comando `netstat`, se muestran solo las conexiones IPv4. El comando `netstat -A inet6` mostrará las conexiones IPv6 y el comando `netstat -46` mostrará IPv4 e IPv6 al mismo tiempo. |
+
+
+### NetworkManager ###
+
+La configuración de networkmanager se guarda en ***/etc/NetworkManager/system-connections***
+
+***nmcli*** es el comando para crear y editar los ficheros de configuración de conexiones
+
+***nmcli dev status*** nos muestra información de todos los dispositivos
+***nmcli con show*** Todos las conexiones
+***nmcli cn show --active*** Todas las conexiones activas
+
+Para crear una conexión de red se usa ***nmcli con add***
+
+***Ejemplos***
+
+```console
+[root@host ~]# nmcli con add con-name eno2 type ethernet ifname eno2
+Connection 'eno2' (8159b66b-3c36-402f-aa4c-2ea933c7a5ce) successfully added
+
+[root@host ~]# nmcli con add con-name eno3 type ethernet ifname eno3 ipv4.method manual ipv4.addresses 192.168.0.5/24 ipv4.gateway 192.168.0.254
+
+[root@host ~]# nmcli con add con-name eno4 type ethernet ifname eno4 ipv6.addresses 2001:db8:0:1::c000:207/64 ipv6.gateway 2001:db8:0:1::1 \
+ipv6.method manual ipv4.addresses 192.0.2.7/24 ipv4.gateway 192.0.2.1 ipv4.method manual
+```
+
+***nmcli con up*** Para activar una conexion ya creada
+
+```console
+[user@host ~]$ nmcli con show
+NAME    UUID         TYPE                      DEVICE
+static-ens3 72ca57a2-f780-40da-b146-99f71c431e2b 802-3-ethernet --
+static-ens5 87b53c56-1f5d-4a29-a869-8a7bdaf56dfa 802-3-ethernet --
+
+[root@host ~]# nmcli con up static-ens3
+Connection successfully activated (D-Bus active path: /org/freedesktop/NetworkManager/ActiveConnection/2)
+```
+***nmcli dev disconnect*** Para deconectar el dispositivo de red y cortar la conexión , en caso de que la conexion tenga autoconnect activado 
+la conexión se volvera a levantar.
+
+***nmcli con show nombre conexion*** Para enumerar la configuración de la conexión , algunas de las caracteristicas no se guardan en /etc/NetworkManager/system-connections/*.nmconnection si no que se proporcionan por el DHCP
+
+***nmcli connection modify*** Sirve para modificar los parametros de la conexión.
+
+```console
+[root@host ~]# nmcli con mod static-ens3 ipv4.addresses 192.0.2.2/24 ipv4.gateway 192.0.2.254 connection.autoconnect yes
+
+[root@host ~]# nmcli con mod static-ens3 ipv6.addresses 2001:db8:0:1::a00:1/64 ipv6.gateway 2001:db8:0:1::1
+```
+
+Al agregar un símbolo más (+) o un símbolo menos (-) al comienzo del nombre de la configuración. Si no se incluye un signo más o menos,
+el valor especificado reemplaza la lista actual de la configuración.
+
+```console
+[root@host ~]# nmcli con mod static-ens3 +ipv4.dns 2.2.2.2
+```
+Se pueden editar los perfiles editando los ficheros de /etc/NetworkManager/system-connections/*.nmconnection
+
+Para cargar perfiles de conexion se usa ***nmcli con reload*** si no se indica el nombre de la conexión se cargaran todos.
+
+***nmcli con del nombre de conexión*** Para borrar  una conexión del sistema, tambien desconecta el dispositivo y elimina su archivo de configuración.
+
+***nmcli general permissions*** Para ver los permisos actuales. ***nmcli gen permissions*** como alias
+
+### Comandos útiles de NetworkManager (`nmcli`)
+
+| Comando                  | Propósito |
+|--------------------------|-----------|
+| `nmcli dev status`       | Muestra el estado de todas las interfaces de red arrojado por NetworkManager. |
+| `nmcli con show`         | Enumera todas las conexiones. |
+| `nmcli con show name`    | Enumera la configuración actual del nombre de la conexión. |
+| `nmcli con add con-name name` | Agrega y asigna un nombre a un nuevo perfil de conexión. |
+| `nmcli con mod name`     | Modifica el nombre de la conexión. |
+| `nmcli con reload`       | Vuelve a cargar los archivos de configuración, después de la edición manual de archivos. |
+| `nmcli con up name`      | Activa el nombre de la conexión. |
+| `nmcli dev dis dev`      | Desconecta la interfaz, lo que también desactiva la conexión actual. |
+| `nmcli con del name`     | Elimina la conexión especificada y su archivo de configuración. |
+
+página 394
+
+
+
+
