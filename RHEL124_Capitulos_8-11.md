@@ -562,7 +562,48 @@ Para cargar perfiles de conexion se usa ***nmcli con reload*** si no se indica e
 | `nmcli dev dis dev`      | Desconecta la interfaz, lo que también desactiva la conexión actual. |
 | `nmcli con del name`     | Elimina la conexión especificada y su archivo de configuración. |
 
-página 394
+La forma recomendada de gestionar perfiles es con el comando nmcli, los usuarios aún pueden crear o modificar manualmente los archivos de configuración de /etc/sysconfig/system-connections/ . Después de editar el archivo de configuración, ejecute el comando nmcli con reload para informar a NetworkManager acerca de estos cambios. Son ficheros .ini con el formato de clave = valor
+
+***hostname*** Sirve para mostrar o modificar el nombre del host
+
+El nombre del host se guarda en /etc/hostname
+
+***hostnamectl*** se usa para modifcar este archivo 
+
+```console
+[root@host ~]# hostnamectl hostname host.example.com
+[root@host ~]# hostnamectl status
+Static hostname: host.example.com
+Icon name: computer-vm
+Chassis: vm #
+Machine ID: ace63d6701c2489ab9c0960c0f1afe1d
+Boot ID: 0edf5ba1830c48adbd6babfa08f0b867
+Virtualization: kvm
+Operating System: Red Hat Enterprise Linux 9.0 (Plow)
+CPE OS Name: cpe:/o:redhat:enterprise_linux:9::baseos
+Kernel: Linux 5.14.0-70.13.1.el9_0.x86_64
+Architecture: x86-64
+Hardware Vendor: Red Hat
+Hardware Model: OpenStack Compute
+[root@host ~]# cat /etc/hostname
+host.example.com
+```
+
+***getent hosts hostname*** puede usarse para probar la resolución de nombre del host en función de la configuración del archivo /etc/nsswitch.conf
+
+#### Comprobar DNS ####
+
+```console
+[root@host ~]# host servera.lab.example.com
+servera.lab.example.com has address 172.25.250.10
+[root@host ~]# host 172.25.250.10
+10.250.25.172.in-addr.arpa domain name pointer servera.lab.example.com.
+```
+
+***dig hostname*** sirve tambien para comprobar la conectividad del servidor dns y ver si resuelve nombres
+
+Los comandos host y dig no ven la configuración en el archivo /etc/hosts. Para probar el archivo /etc/hosts se  el comando ***getent hosts HOSTNAME***
+
 
 
 
