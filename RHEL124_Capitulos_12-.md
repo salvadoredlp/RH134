@@ -47,5 +47,10 @@ El comando rct inspecciona los certificados y el comando subscription-manager ex
 
 ### Paquetes de software y RPM ###
 
-pÁGINA 430
+***rpm -qa***          Enumera los paquetes instalados.
+***rpm -qf FILENAME*** Determina qué paquete proporciona el FILENAME.
+***rpm -q***           Detalla la versión del paquete instalado actualmente.
+***rpm -qi***          Brinda información detallada sobre un paquete.
+***rpm -ql***          Enumera los archivos instalados con el paquete.
+
 
