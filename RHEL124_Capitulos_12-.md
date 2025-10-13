@@ -52,5 +52,113 @@ El comando rct inspecciona los certificados y el comando subscription-manager ex
 ***rpm -q***           Detalla la versión del paquete instalado actualmente.
 ***rpm -qi***          Brinda información detallada sobre un paquete.
 ***rpm -ql***          Enumera los archivos instalados con el paquete.
+***rpm -qc***          Lista solo la ficheros de configuración de los paquetes instalados
+***rpm -qd***          Lista los paquetes de documentación que tiene ese paquete. 
+***rpm -q --scripts*** Lista de los shell scripts que se ejecutan antes o despues de instalar los paquetes
+
+***rpm -q --changelog*** Lista los cambios en el registro que ha hecho el paquete.
+
+***rpm -qlp***       Enumera los archivos instalados con el paquete local.
+
+```console
+[user@host ~]$ rpm -qlp podman-4.0.0-6.el9.x86_64.rpm
+/etc/cni/net.d
+/etc/cni/net.d/87-podman-bridge.conflist
+/usr/bin/podman
+...output omitted...
+```
+
+#### Instalar RPM Packages ####
+
+***rpm -ivh***    Instalar los paquetes rpm 
+
+```console
+[root@host ~]# rpm -ivh podman-4.0.0-6.el9.x86_64.rpm
+Verifying...
+################################# [100%]
+Preparing...
+################################# [100%]
+Updating / installing...
+podman-2:4.0.0-6
+################################# [100%]
+```
+
+***rpm2cpio*** Extraer ficheros de un paquete rpm, hay que usar el comando ***cpio -idv*** para extraer los ficheros 
+
+```console
+[user@host tmp-extract]$ rpm2cpio httpd-2.4.51-7.el9_0.x86_64.rpm | cpio -idv
+./etc/httpd/conf
+./etc/httpd/conf.d/autoindex.conf
+./etc/httpd/conf.d/userdir.conf
+./etc/httpd/conf.d/welcome.conf
+./etc/httpd/conf.modules.d
+```
+
+La opción ***-t*** de cpio sirve para listar los paquetes rpm que hay en el paquete.
+
+### DNF ### 
+
+***dnf*** Sustituye a yum y sirve para instalar paquetes y sus dependencias.
+
+***dnf list*** Nos muestra información de paquetes instalados con el nombre que le digamos. 
+
+Buscara todos los paquetes http 
+
+```console
+[user@host ~]$ dnf list 'http*'
+```
+
+***dnf search all 'keyword'*** Lista todos los paquetes que tienen el nombre o en su descripción la palabra clave que buscamos
+
+***dnf info nombrepaquete*** Nos da información sobre el paquete que instalara
 
 
+***dnf provides PATH*** Muestra paquetes que coinciden con el nombre de ruta especificado (que a menudo , incluye caracteres comodines). 
+
+```console
+[user@host ~]$ dnf provides /var/www/html
+httpd-filesystem-2.4.51-5.el9.noarch : The basic directory layout for the Apache
+HTTP Server
+Repo : rhel-9.0-for-x86_64-appstream-rpms
+Matched from:
+Filename : /var/www/html
+```
+
+***dnf install NOMBREPAQUETE*** Obtiene e instala el paquete de software indicado junto con sus dependencias.
+
+***dnf update PACKAGE*** obtiene e instala la versión posterior del paquete especificado, si no se pone nombre del paquete instala todas las actualizaciones relevantes.
+
+***dnf list kernel*** Lista todos los kernels instalados y disponibles
+
+***uname -r*** Muestra versión del kernel utilizada 
+
+***uname -a*** Muestra el lanzamiento e información adicional del kernel
+
+***dnf remove PACKAGENAME*** Quita los paquetes enumerados y cualquier paquete que requiere qu ese eliminen los paquetes.
+
+
+Los grupos son colecciones de software , colecciones de paquetes.
+Los grupos tienen software de tres tipos:
+
+- mandatory (obligatorios) Se tienen que instalar con el grupo
+- default Se instalan en el grupo
+- optional No se instalan cuando se instala el grupo o a menos que se lo solicite
+  
+***dnf group list***
+
+***dnf group info NOMBRE DE GRUPO DE PAQUETES***
+
+***dnf group list hidden*** Lista los grupos ocultos que no son los predeterminados
+
+***dnf group install "nombre del grupo***
+
+#### Visualización de las transacciones ####
+
+Todas las transacciones de instalacion de paquetes se registran en ***/var/log/dnf.rpm.log***
+
+***dnf history*** muestra las últimas transacciones realizadas, de instalación o eliminación.
+
+***dnf history undo 6*** Invierte la transacción hecha en 6º lugar
+
+
+Página 447  427
