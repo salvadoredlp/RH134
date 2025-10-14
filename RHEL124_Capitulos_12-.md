@@ -191,8 +191,44 @@ paquetes instalados por cada uno de los perfiles del módulo.
 #### Habilitación de repositorios ####
 
 ***dnf repolist all*** Nos muestra todos los repositorios disponibles
+***dnf config-manager --add-repo=""*** Para agregar repositorios. Se agregaran al archivo /etc/yum/repos.d
 
+```console
+[user@host ~]$ dnf config-manager \
+--add-repo="https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/"
+Adding repo from: https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64
+
+[user@host ~]$ cd /etc/yum.repos.d
+[user@host yum.repos.d]$ cat \
+dl.fedoraproject.org_pub_epel_9_Everything_x86_64_.repo
+[dl.fedoraproject.org_pub_epel_9_Everything_x86_64_]
+name=created by dnf config-manager from https://dl.fedoraproject.org/pub/epel/9/
+Everything/x86_64/
+baseurl=https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/
+enabled=1
+```
+
+Se usa el campo gpgkey para indicar la clave que usara el repositorio
+
+```console
+[EPEL]
+name=EPEL 9
+baseurl=https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-9
+```
+
+***rpm --import*** Para importar la llave pública que proporcionan algunos repositorios, se instala antes de instalar el repositorio
+
+```console
+[user@host ~]$ rpm --import \
+https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9
+[user@host ~]$ dnf install \
+https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 ***dnf config-manager --enable*** Habilita o deshabilita repositorios
+```
+
 
 
 
