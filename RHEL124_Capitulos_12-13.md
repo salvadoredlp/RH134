@@ -275,7 +275,48 @@ Para desconectar de forma segura un dispositivo extraíble, primero desmonte man
 
 ***lsof directorio*** Para ver que procesos estan usando el directorio.
 
+#### Localización de archivos ####
 
+***locate*** busca por medio de un indice generado previamente, hay que actualizar ese indice mediante ***updatedb***
+  -i Distingue entre mayúsculas y minúsculas
+  -n limita el número de resultados
 
+***find*** Busca archivos en tiempo real en la jerarquía del sistema de archivos. Para buscar hace falta que el usuario tenga permiso de lectura y ejecución en los directorios que busca.
+  -name nombre del archivo, se pueden usar comodines
+  -iname no distingue entre mayusculas y minusculas
+  -user Busca los ficheros de un usuario determinado
+  -group Busca los ficheros de un usuario determinado
+  -uid Buscar ficheros con propiertario con un id determinado
+  -gid Buscar ficheros con grupo propietario con un id determinado
+  -perm Para buscar ficheros con unos permisos determinados se suele poner en octal pero puede ponerse de otra forma.
+      El 0 significa cualquier tipo de permiso.
+  ```console
+[root@host ~]# find /home -perm 764
+...output omitted...
+[root@host ~]# find /home -perm u=rwx,g=rw,o=r
+...output omitted...
+```
+  -ls Proporciona información detallada de los ficheros encontrados.
+  -size Busca ficheros con un tamaño determinado
 
+```console
+[developer@host ~]$ find -size 10M
+...output omitted...
 
+[developer@host ~]$ find -size +10G
+...output omitted...
+
+[developer@host ~]$ find -size -10k
+...output omitted.
+```  
+  El comando find con la opción -mmin, seguida de la hora en minutos, busca todos los archivos de los cuales se ha cambiado su contenido hace n minutos en el pasado. 
+  La marca de tiempo del archivo se redondea hacia abajo y admite valores fraccionarios con el rango +n y -n
+
+  -type tipodefichero  
+    • Para archivos regulares, use el indicador f.
+    • Para los directorios, use el indicador d.
+    • Para enlaces blandos, use el indicador l.
+    • Para dispositivos de bloque, use el indicador b.
+
+  
+  
