@@ -161,4 +161,38 @@ Todas las transacciones de instalacion de paquetes se registran en ***/var/log/d
 ***dnf history undo 6*** Invierte la transacción hecha en 6º lugar
 
 
-Página 447  427
+| Tarea                                      | Comando                                 |
+|-------------------------------------------|------------------------------------------|
+| Listar paquetes instalados y disponibles  | `dnf list [NAME-PATTERN]`                |
+| Listar grupos instalados y disponibles    | `dnf group list`                         |
+| Buscar un paquete por palabra clave       | `dnf search KEYWORD`                     |
+| Mostrar detalles de un paquete            | `dnf info PACKAGENAME`                   |
+| Instalar un paquete                       | `dnf install PACKAGENAME`                |
+| Instalar un grupo de paquetes             | `dnf group install GROUPNAME`            |
+| Actualizar todos los paquetes             | `dnf update`                             |
+| Eliminar un paquete                       | `dnf remove PACKAGENAME`                 |
+| Mostrar historial de transacciones        | `dnf history`                            |
+
+• dnf module list : enumera los módulos disponibles con el nombre del módulo, el flujo, los
+perfiles y un resumen.
+
+• dnf module list module-name : enumera los flujos de módulos para un módulo específico
+y recupera su estado.
+
+• dnf module info module-name : muestra los detalles de un módulo, incluidos los perfiles
+disponibles y una lista de los paquetes que instala el módulo. La ejecución del comando dnf
+module info sin especificar un flujo de módulo enumera los paquetes que se instalan desde
+el perfil y el flujo predeterminados. Use el formato module-name:stream para ver un flujo
+de módulos específico. Agregue la opción --profile para mostrar información sobre los
+paquetes instalados por cada uno de los perfiles del módulo.
+
+• dnf module provides package : muestra qué módulo proporciona un paquete específico.
+
+#### Habilitación de repositorios ####
+
+***dnf repolist all*** Nos muestra todos los repositorios disponibles
+
+***dnf config-manager --enable*** Habilita o deshabilita repositorios
+
+
+
