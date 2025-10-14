@@ -318,5 +318,60 @@ Para desconectar de forma segura un dispositivo extraíble, primero desmonte man
     • Para enlaces blandos, use el indicador l.
     • Para dispositivos de bloque, use el indicador b.
 
-  
-  
+### Habilitación de la consola web ###
+
+```console
+[root@host ~]# dnf install cockpit
+
+[root@host ~]# systemctl enable --now cockpit.socket
+Created symlink /etc/systemd/system/sockets.target.wants/cockpit.socket -> /usr/lib/systemd/system/cockpit.socket.
+```
+
+Si está usando un perfil de firewall personalizado, debe agregar el servicio cockpit a firewalld para abrir el puerto 9090 en el firewall:
+
+```console
+[root@host ~]# firewall-cmd --add-service=cockpit --permanent
+success
+[root@host ~]# firewall-cmd --reload
+success
+```
+
+Para acceder a la consola http://servername:9090
+
+### Generación de un informe SOS desde la línea de comandos
+
+```console
+[root@host ~]# dnf install sos
+...output omitted...
+Complete!
+
+[root@host ~]# sos report
+...output omitted...
+Press ENTER to continue, or CTRL-C to quit.
+Optionally, please enter the case id that you are generating this report for []:
+...output omitted...
+Your sosreport has been generated and saved in:
+/var/tmp/sosreport-host-2022-03-29-wixbhpz.tar.xz
+..output omitted...
+Please send this file to your support representative.
+```
+
+***sos clean*** oculta la información personal del informe 
+***sos report --upload*** Envia el informe a soporte
+
+```console
+[root@host ~]# sos clean /var/tmp/sosreport-host-2022-03-29-wixbhpz.tar.xz*
+...output omitted...
+Press ENTER to continue, or CTRL-C to quit.
+...output omitted...
+The obfuscated archive is available at
+/var/tmp/sosreport-host0-2022-03-29-wixbhpz-obfuscated.tar.xz
+...output omitted...
+Please send the obfuscated archive to your support representative and keep the
+mapping file private
+```
+
+***insights-client --register*** Para registrar el sistema con el servicio de Insights y cargar los metadatos iniciales del sistema.
+
+***insights-client*** Para actualizar los metadatos del cliente
+
