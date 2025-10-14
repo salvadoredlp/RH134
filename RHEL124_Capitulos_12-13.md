@@ -230,5 +230,47 @@ https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 ```
 
 
+### Puntos de montaje ###
+
+***df*** Muestra los sistemas de ficheros y puntos de montaje disponibles
+  -h -H Muestra las opciones con medidas que se pueden leer -h en base 2 y -H en base 10
+***du*** Muestra información detallada del espacio en disco de un directorio
+  -h -H Tambien se pueden usar las opciones -h o -H
+
+```console
+[root@host ~]# du /usr/share
+...output omitted...
+176 /usr/share/smartmontools
+184 /usr/share/nano
+8 /usr/share/cmake/bash-completion
+8 /usr/share/cmake
+356676 /usr/share
+```
+
+***lsblk*** Enumera los detalles de un dispositivo de bloque especificado o todos los dispositivos disponibles.
+***mount dispositivo puntodemontaje*** Para montar un dispositivo en un directorio
+
+***lsblk -fp*** Detalla la ruta completa del dispositivo , los UUID y los puntos de montaje así como el tipo de sistema de archivos en la partición.
+
+Para montar un dispositivo con el UUID
+
+```console
+root@host ~]# lsblk -fp
+lsblk -fp
+NAME                      FSTYPE      FSVER    LABEL UUID                                   FSAVAIL FSUSE% MOUNTPOINTS
+/dev/sr0                                                                                                   
+/dev/vda                                                                                                   
+├─/dev/vda1               xfs                        ece45b63-1051-4bfe-8fb4-a90bbfc061c0    460,1M    52% /boot
+└─/dev/vda2               LVM2_member LVM2 001       bsI3s4-lF5F-Aeh5-uHkq-bX4S-Pdtb-vNoz2l                
+  ├─/dev/mapper/rhel-root xfs                        117b659e-f8f3-457c-a599-35844225d075     16,4G    25% /
+  └─/dev/mapper/rhel-swap swap        1              b74907ce-b9cb-44ec-9954-2d90e28a88a0                  [SWAP]
+
+[root@host ~]# mount UUID=" b74907ce-b9cb-44ec-9954-2d90e28a88a0" /mnt/data
+```
+Con el entorno de escritorio gráfico, el sistema monta automáticamente medios de almacenamiento extraíbles cuando se detecta la presencia de medios.
+El dispositivo de almacenamiento extraíble se monta en la ubicación /run/media/USERNAME/LABEL. USERNAME es el nombre del usuario que ha iniciado sesión en el entorno gráfico. LABEL es un identificador, que suele ser la etiqueta en el medio de almacenamiento.
+Para desconectar de forma segura un dispositivo extraíble, primero desmonte manualmente todos
+los sistemas de archivos en el dispositivo.
+
 
 
