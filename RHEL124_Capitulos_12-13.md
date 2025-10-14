@@ -269,8 +269,13 @@ NAME                      FSTYPE      FSVER    LABEL UUID                       
 ```
 Con el entorno de escritorio gráfico, el sistema monta automáticamente medios de almacenamiento extraíbles cuando se detecta la presencia de medios.
 El dispositivo de almacenamiento extraíble se monta en la ubicación /run/media/USERNAME/LABEL. USERNAME es el nombre del usuario que ha iniciado sesión en el entorno gráfico. LABEL es un identificador, que suele ser la etiqueta en el medio de almacenamiento.
-Para desconectar de forma segura un dispositivo extraíble, primero desmonte manualmente todos
-los sistemas de archivos en el dispositivo.
+Para desconectar de forma segura un dispositivo extraíble, primero desmonte manualmente todos los sistemas de archivos en el dispositivo.
+
+***umount directorio*** Para desmontar un dispositivo. No se puede desmontar cuando esta en uso o cuando estas en dentro del directorio
+
+***lsof directorio*** Para ver que procesos estan usando el directorio.
+
+
 
 
 
