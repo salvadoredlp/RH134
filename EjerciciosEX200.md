@@ -305,32 +305,33 @@
     ```
 
 24. <details>
-    <summary> Modify the static connection profile to configure the additional 172.25.250.211 IPv4 address with the 255.255.255.0 netmask. Do not remove the existing IPv4 address. Verify that serverb responds to all addresses when the static connection profile is active.On serverb, restore the original settings by activating the original network profile.</summary>
-   <br>
+    <summary> Modify the static connection profile to configure the additional 172.25.250.211 IPv4 address with the 255.255.255.0 netmask. Do not remove the existing IPv4 address. Verify that serverb responds to all addresses when the static connection profile is active.On serverb, restore the original settings by activating the original network profile. </summary>
+    <br>
 
-   ```console
-   [root@serverb ~]# nmcli connection modify static +ipv4.addresses '172.25.250.211/24'
-   # Activarla de nuevo para que tenga efecto la nueva ip adicional
-   [root@serverb ~]# nmcli connection up static
-   ```
-   <br>
+    ```console
+    [root@serverb ~]# nmcli connection modify static +ipv4.addresses '172.25.250.211/24'
+    # Activarla de nuevo para que tenga efecto la nueva ip adicional
+    [root@serverb ~]# nmcli connection up static
+    ```
+    <br>
 
-   Usar ping para comprobar si las nuevas ips estan activas
-   <br>
-   ```console
-   student@workstation ~]$ ping -c2 172.25.250.211
-   PING 172.25.250.211 (172.25.250.211) 56(84) bytes of data.
-   64 bytes from 172.25.250.211: icmp_seq=1 ttl=64 time=0.246 ms
-   64 bytes from 172.25.250.211: icmp_seq=2 ttl=64 time=0.296 ms
-   ```
-   <br>
+    Usar ping para comprobar si las nuevas ips estan activas
+    <br>
+    ```console
+    student@workstation ~]$ ping -c2 172.25.250.211
+    PING 172.25.250.211 (172.25.250.211) 56(84) bytes of data.
+    64 bytes from 172.25.250.211: icmp_seq=1 ttl=64 time=0.246 ms
+    64 bytes from 172.25.250.211: icmp_seq=2 ttl=64 time=0.296 ms
+    ```
+    <br>
    
-   Restore the original settings by activating the original network profile.
-   <br>
-   ```console
-   [root@serverb ~]# nmcli connection up "System eth0"
-   ...output omitted...
-   ```
+    Restore the original settings by activating the original network profile.
+    <br>
+
+    ```console
+    [root@serverb ~]# nmcli connection up "System eth0"
+    ...output omitted...
+    ```
      
 </details>
 
