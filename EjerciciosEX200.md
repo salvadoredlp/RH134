@@ -205,5 +205,16 @@
 
 </details>
 
+17. <details>
+    <summary> Asegurarse de que los usuarios en ese directorio /home/dbadmin1/grading/review2 puedan borrar ficheros de los que son propietarios    </summary>
+    <br>
+   
+    ```console
+    [dbadmin1@serverb ~]$ chmod o+t /home/dbadmin1/grading/review2
+    ``` 
+</details>
+
 17. 4.7 página 529
+
+
 
