@@ -82,7 +82,7 @@ user@host ~]$ bg %1
 
 ***kill -l*** Muestra un listado de las señales que existen
 
-*** Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)***
+***Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)***
 
 Enviar una señal a un proceso 
 
