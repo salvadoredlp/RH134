@@ -275,15 +275,81 @@
 </details>
 
 22. <details> 
-    <summary> Create the static connection profile for the ethX interface. Set the network settings statically so that it does not use DHCP. When done, activate that connection profile. <br>    Base the settings IPv4 address 172.25.250.111, Netmask 255.255.255.0 ,Gateway 172.25.250.254, DNS server 172.25.250.254 </summary>
+    <summary> Create the static connection profile for the ethX interface. Set the network settings statically so that it does not use DHCP. When done, activate that connection profile. <br>  Base the settings IPv4 address 172.25.250.111, Netmask 255.255.255.0 ,Gateway 172.25.250.254, DNS server 172.25.250.254 </summary>
     <br>
     
     ```console
     nmcli connection add con-name static type ethernet ifname ethX ipv4.addresses '172.25.250.111/24' \
     ipv4.gateway '172.25.250.254' ipv4.dns '172.25.250.254' ipv4.method manual
     Connection 'static' (ac8620e6-b77e-499f-9931-118b8b015807) successfully added.
+    # Activar la conexión creada
+    [root@serverb ~]# nmcli connection up static
     ```
 </details>
 
+23. <details> 
+    <summary> On serverb, set client-review4 as the canonical hostname for the servera 172.25.250.10 IPv4 address. </summary>
+    <br>
+   
+    ```console
+    hostnamectl hostname server-review4.lab4.example.com
+    [root@serverb ~]# hostname
+    server-review4.lab4.example.com
+    ```
+    
+    Añadir la dirección y el nombre del host a  /etc/hosts
 
+    ```console
+    [root@serverb ~]# vim /etc/hosts
+    172.25.250.10 client-review4
+    ```
+
+24. <details>
+    <summary> Modify the static connection profile to configure the additional 172.25.250.211 IPv4 address with the 255.255.255.0 netmask. Do not remove the existing IPv4 address. Verify that serverb responds to all addresses when the static connection profile is active.On serverb, restore the original settings by activating the original network profile.</summary>
+   <br>
+
+   ```console
+   [root@serverb ~]# nmcli connection modify static +ipv4.addresses '172.25.250.211/24'
+   # Activarla de nuevo para que tenga efecto la nueva ip adicional
+   [root@serverb ~]# nmcli connection up static
+   ```
+   <br>
+
+   Usar ping para comprobar si las nuevas ips estan activas
+   <br>
+   ```console
+   student@workstation ~]$ ping -c2 172.25.250.211
+   PING 172.25.250.211 (172.25.250.211) 56(84) bytes of data.
+   64 bytes from 172.25.250.211: icmp_seq=1 ttl=64 time=0.246 ms
+   64 bytes from 172.25.250.211: icmp_seq=2 ttl=64 time=0.296 ms
+   ```
+   <br>
+   
+   Restore the original settings by activating the original network profile.
+   <br>
+   ```console
+   [root@serverb ~]# nmcli connection up "System eth0"
+   ...output omitted...
+   ```
+     
+</details>
+
+25. <details>
+    <summary>  • Identify the unmounted block device that contains an XFS file system on the serverb machine. Mount the block device on the /review5-disk directory.<br>  • Find the review5-path file. Create the /review5-disk/review5-path.txt file that contains a single line with the absolute path to the review5-path file.<br>  • Find all the files that the contractor1 user and the contractor group own. The files must also have the 640 octal permissions. Save the list of these files in the /review5-disk/review5-perms.txt file. <br> • Find all files with a size of 100 bytes. Save the absolute paths of these files in the /review5-disk/review5-size.txt file.</summary>
+    <br>
+   
+    ```console
+    [root@serverb ~]# lsblk -fs
+    [root@serverb ~]# mkdir /review5-disk
+    [root@serverb ~]# mount /dev/vdb1 /review5-disk
+    [root@serverb ~]# df -Th
+    [root@serverb ~]# find / -iname review5-path 2>/dev/null # Al no tener permisos para acceder a todos los directorios dara error en muchos, redirigimos la salida de error a nulo para que no salgan esos mensajes de error.
+    /var/tmp/review5-path
+    root@serverb ~]# find / -iname review5-path 2>/dev/null 1>/review5-disk/review5-path.txt
+     [root@serverb ~]# find / -user contractor1 -group contractor -perm 640 2>/dev/null
+     [root@serverb ~]# cat /review5-disk/review5-perms.txt
+     /usr/share/review5-perms
+     [root@serverb ~]# find / -type f -size 100c 2>/dev/null 1>/review5-disk/review5-size.txt
+    ```
+</details>
 
