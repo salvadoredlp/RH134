@@ -1,2 +1,2 @@
-## Apuntes para preparar el examen de Certifiación para RHCSA ## 
+### Apuntes Certifiación para el EX200 RHCSA ###
 
