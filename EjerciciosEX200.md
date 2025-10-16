@@ -184,7 +184,8 @@
 
 15. <details>
     <summary> Establezca el usuario dbadmin1 y grupo database de manera recursiva en usuario propietario dentro del directorio de forma recursiva y los permisos de grupo en ejecución. </summary>
-
+    <br>
+   
     ```console
     [dbadmin1@serverb ~]$ chown -R dbadmin1:database /home/dbadmin1/
     [dbadmin1@serverb ~]$ chmod -R g+x /home/dbadmin1
@@ -193,17 +194,13 @@
 </details>
 
 16. <details>
-    <summary> Configurar el directorio /home/dbadmin1/grading/review2 para permitir que los miembros del grupo *database* puedan crear contenido en él. Todos los demas usuarios deben poder leer y ejecutar.
-    </summary>
-   <br>
-
+    <summary> Configurar el directorio /home/dbadmin1/grading/review2 para permitir que los miembros del grupo database puedan crear contenido en él. Todos los demas usuarios deben poder leer y ejecutar. </summary>
+   
    ```console
-   [dbadmin1@serverb ~]$ chmod g+s /home/dbadmin1/grading/review2
-   # Los demas usuarios others pueden leer y ejecutar 5(rwx 101) los usuarios propietarios y del grupo pueden de todo 7(rwx 111).
-   [dbadmin1@serverb ~]$ chmod 775 /home/dbadmin1/grading/review2
+      [dbadmin1@serverb ~]$ chmod g+s /home/dbadmin1/grading/review2
+      [dbadmin1@serverb ~]$ chmod 775 /home/dbadmin1/grading/review2
    ```
-
-</details>
+ </details>
 
 17. <details>
     <summary> Asegurarse de que los usuarios en ese directorio /home/dbadmin1/grading/review2 puedan borrar ficheros de los que son propietarios    </summary>
@@ -214,7 +211,42 @@
     ``` 
 </details>
 
-17. 4.7 página 529
+18. <details>
+    <summary> Generar claves para SSH-KEYS para un usuario determinado en un directorio determinado </summary>
+
+    ```console
+    [student@serverb ~]$ ssh-keygen
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (/home/student/.ssh/id_rsa): /home/student/.ssh/review3_key
+    ```
+    
+</details>
+
+19. <details>
+    <summary> Configurar el usuario student de servera para aceptar logins autenticandose con la llave ***pública*** y sin necesitar password. </summary>
+       <br>
+       
+       ```console
+          [student@serverb ~]$ ssh-copy-id -i .ssh/review3_key.pub student@servera
+          /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: ".ssh/review3.pub"
+          /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+         /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+         student@servera's password: student
+         Number of key(s) added: 1
+         Now try logging into the machine, with:
+         "ssh 'student@servera'"
+         and check to make sure that only the key(s) you wanted were added.
+       ```
+      Para iniciar sesión con esa clave tendremos que indicarlo con la opción -i de ssh
+       <br>
+
+      ```console
+         [student@serverb ~]$ ssh -i .ssh/review3_key student@servera
+         ...output omitted...
+         [student@servera ~]$
+      ```
+
+</details>
 
 
 
