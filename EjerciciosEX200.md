@@ -1,29 +1,30 @@
+### EJERCICIOS EX200 ### 
 
 1. <details>
    <summary> Loguearte en un host como un usuario determinado</summary>  
    <br>
   
-    ```console
+   ```console
       [student@workstation ~]$ ssh student@serverb
-    ```
+   ```
 </details>
 
 2. <details>
    <summary> Crear un directorio</summary>
    <br>
   
-    ```console
+   ```console
       [student@serverb ~]$ mkdir grading
-    ```
+   ```
 </details>
 
 3. <details>
    <summary> Crear tres ficheros vacios grade1,grade2 y grade3 </summary>
    <br>
   
-    ```console
+   ```console
       [student@serverb ~]$ touch grading/grade{1,2,3}
-    ```
+   ```
 </details>
 
 4. <details>
@@ -39,9 +40,9 @@
    <summary> Visualizar las últimas tres lineas del fichero manage y añadelo a review.txt </summary>
    <br>
 
-    ```console
+   ```console
       [student@serverb ~]$ tail -3 bin/manage >> grading/review.txt
-    ```
+   ```
 </details>
 
 6. <details> 
@@ -117,7 +118,7 @@
     <summary> Crear un grupo con nombre *database* y un gid 50000 y añadirle un usuario *dbadmin1* y ponerle la password redhat</summary>
     <br>
    
-       ```console
+    ```console
           [root@serverb ~]# groupadd -g 50000 database
           # Crear el usuario dbadmin1 y se incluye en el grupo database
           [root@serverb ~]# useradd -G database dbadmin1
@@ -127,7 +128,7 @@
           BAD PASSWORD: The password is shorter than 8 characters
           Retype new password: redhat
           passwd: all authentication tokens updated successfully.
-       ``` 
+    ``` 
 </details>
 
 12. <details>
@@ -138,11 +139,11 @@
     </summary>
     <br>
    
-       ```console
+    ```console
           [root@serverb ~]# chage -d 0 dbadmin1
           [root@serverb ~]# chage -m 10 dbadmin1
           [root@serverb ~]# chage -M 30 dbadmin1
-       ```
+    ```
        
       Opciones de ***chage***
    
@@ -223,9 +224,9 @@
 
 19. <details>
     <summary> Configurar el usuario student de servera para aceptar logins autenticandose con la llave ***pública*** y sin necesitar password. </summary>
-       <br>
+    <br>
        
-       ```console
+    ```console
           [student@serverb ~]$ ssh-copy-id -i .ssh/review3_key.pub student@servera
           /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: ".ssh/review3.pub"
           /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
@@ -235,30 +236,31 @@
          Now try logging into the machine, with:
          "ssh 'student@servera'"
          and check to make sure that only the key(s) you wanted were added.
-       ```
-       <br>
-      Para iniciar sesión con esa clave tendremos que indicarlo con la opción -i de ssh
-       <br>
+    ```
+    <br>
+    Para iniciar sesión con esa clave tendremos que indicarlo con la opción -i de ssh
+    <br>
 
-      ```console
+    ```console
          [student@serverb ~]$ ssh -i .ssh/review3_key student@servera
          ...output omitted...
          [student@servera ~]$
-      ```
+    ```
 </details>
 
 20. <details>
-    <summary> Configurar serverb para prevenir que los usuarios usen sus passwords para loguear y solo usen clave de pares SSH-KEYS y para evitar que los root se puedan loguear </summary>
+    <summary>Configurar serverb para prevenir que los usuarios usen sus passwords para loguear y solo usen clave de pares SSH-KEYS y para evitar que los root se puedan loguear</summary>
     <br>
 
-   ```console
-      [student@serverb ~]$ vim /etc/sshd/sshd_config
-         PermitRootLogin        no
-         PasswordAuthentication no
-      # Recargar el servicio sshd para que los cambios tengan efecto
-      [student@serverb ~]$ sudo systemctl reload sshd.service
-   ```
+    ```console
+    [student@serverb ~]$ vim /etc/sshd/sshd_config
+    PermitRootLogin        no
+    PasswordAuthentication no
+    # Recargar el servicio sshd para que los cambios tengan efecto
+    [student@serverb ~]$ sudo systemctl reload sshd.service
+    ```
 </details>
+
 
 
 
