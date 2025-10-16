@@ -168,8 +168,42 @@
     [root@serverb ~]# vim /etc/sudoers.d/dbadmin1
     dbadmin1 ALL=(ALL) ALL
     ```
+
+14. <details>
+    <summary> Añadir mascara 007 al usuario dbadmin1 </summary>
+    <br>
+   
+    ```console
+    [root@serverb ~]# su - dbadmin1
+    [dbadmin1@serverb ~]$ echo "umask 007" >> .bashrc
+    # Para cargar la configuación de .bashrc se usa el comando source
+    [dbadmin1@serverb ~]$ source ~/.bashrc
+    ```
+       
+</details>
+
+15. <details>
+    <summary> Establezca el usuario dbadmin1 y grupo database de manera recursiva en usuario propietario dentro del directorio de forma recursiva y los permisos de grupo en ejecución. </summary>
+
+    ```console
+    [dbadmin1@serverb ~]$ chown -R dbadmin1:database /home/dbadmin1/
+    [dbadmin1@serverb ~]$ chmod -R g+x /home/dbadmin1
+    ```
     
 </details>
 
-4.7 página 529
+16. <details>
+    <summary> Configurar el directorio /home/dbadmin1/grading/review2 para permitir que los miembros del grupo *database* puedan crear contenido en él. Todos los demas usuarios deben poder leer y ejecutar.
+    </summary>
+   <br>
+
+   ```console
+   [dbadmin1@serverb ~]$ chmod g+s /home/dbadmin1/grading/review2
+   # Los demas usuarios others pueden leer y ejecutar 5(rwx 101) los usuarios propietarios y del grupo pueden de todo 7(rwx 111).
+   [dbadmin1@serverb ~]$ chmod 775 /home/dbadmin1/grading/review2
+   ```
+
+</details>
+
+17. 4.7 página 529
 
