@@ -261,6 +261,19 @@
     ```
 </details>
 
+21. <details> 
+    <summary> Determine the Ethernet interface name and the connection profile name that it uses.</summary>
+    <br>
+    
+    ```console
+    [root@serverb ~]# nmcli device status
+    DEVICE    TYPE    STATE                CONNECTION
+    eth0   ethernet connected              System eth0
+    eth1   ethernet connected              System eth1
+    lo     loopback connected (externally) lo
+    ```
+
+</details>
 
 
 
