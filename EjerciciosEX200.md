@@ -160,8 +160,8 @@
 </details>
 
 13. <details>
-    <summary> Enable the dbadmin1 user to use the sudo command to run any command as the superuser.<br>
-         &nbsp;&nbsp;&nbsp;&nbsp;Use the vim /etc/sudoers.d/dbadmin1 command to create the file and add the following content:</summary>
+    <summary> Enable the dbadmin1 user to use the sudo command to run any command as the superuser. </summary>
+    <summary> &nbsp;&nbsp;&nbsp;&nbsp;Use the vim /etc/sudoers.d/dbadmin1 command to create the file and add the following content: </summary>
     <br>
 
     ```console
@@ -203,7 +203,7 @@
 </details>
 
 17. <details>
-    <summary> Asegurarse de que los usuarios en ese directorio /home/dbadmin1/grading/review2 puedan borrar ficheros de los que son propietarios    </summary>
+    <summary> Asegurarse de que los usuarios en ese directorio /home/dbadmin1/grading/review2 puedan borrar ficheros de los que son propietarios. </summary>
     <br>
    
     ```console
@@ -219,7 +219,6 @@
     Generating public/private rsa key pair.
     Enter file in which to save the key (/home/student/.ssh/id_rsa): /home/student/.ssh/review3_key
     ```
-    
 </details>
 
 19. <details>
@@ -237,6 +236,7 @@
          "ssh 'student@servera'"
          and check to make sure that only the key(s) you wanted were added.
        ```
+       <br>
       Para iniciar sesión con esa clave tendremos que indicarlo con la opción -i de ssh
        <br>
 
@@ -247,6 +247,18 @@
       ```
 </details>
 
+20. <details>
+    <summary> Configurar serverb para prevenir que los usuarios usen sus passwords para loguear y solo usen clave de pares SSH-KEYS y para evitar que los root se puedan loguear </summary>
+    <br>
+
+   ```console
+      [student@serverb ~]$ vim /etc/sshd/sshd_config
+         PermitRootLogin        no
+         PasswordAuthentication no
+      # Recargar el servicio sshd para que los cambios tengan efecto
+      [student@serverb ~]$ sudo systemctl reload sshd.service
+   ```
+</details>
 
 
 
