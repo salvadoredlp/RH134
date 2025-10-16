@@ -6,7 +6,7 @@
     ```console
       [student@workstation ~]$ ssh student@serverb
     ```
-   </details>
+</details>
 
 2. <details>
    <summary> Crear un directorio</summary>
@@ -15,11 +15,11 @@
     ```console
       [student@serverb ~]$ mkdir grading
     ```
-   </details>
+</details>
 
 3. <details>
    <summary> Crear tres ficheros vacios grade1,grade2 y grade3 </summary>
-    <br>
+   <br>
   
     ```console
       [student@serverb ~]$ touch grading/grade{1,2,3}
@@ -33,7 +33,7 @@
    ```console
       [student@serverb ~]$ head -5 bin/manage > grading/review.txt
    ```
-  </details>
+</details>
 
 5. <details>
    <summary> Visualizar las últimas tres lineas del fichero manage y añadelo a review.txt </summary>
@@ -42,7 +42,7 @@
     ```console
       [student@serverb ~]$ tail -3 bin/manage >> grading/review.txt
     ```
-   </details>
+</details>
 
 6. <details> 
    <summary> Copiar /home/student/grading/review.txt a /home/student/grading/review-copy.txt</summary>
@@ -51,7 +51,7 @@
     ```console
       [student@serverb grading]$ cp review.txt review-copy.txt</details>
     ```
-    </details>
+</details>
 
 7. <details>
    <summary> Crear un hard link de /home/student/hardcopy a /home/student/grading/grade1 </summary>
@@ -62,7 +62,7 @@
      [student@serverb ~]$ ls -l grading/grade1
      -rw-r--r--. 2 student student 0 Mar 6 16:45 grading/grade1
    ```
-   </details>
+</details>
    
 8. <details>
    <summary> Crear un soft link o enlace simbolico de /home/student/softcopy /home/student/gading/grade2 </summary>
@@ -111,7 +111,7 @@
       | 20    | TSTP (Keyboard stop)     | A diferencia de SIGSTOP, puede bloquearse, ignorarse o manipularse. Enviado al presionar una secuencia de teclas de suspensión (Ctrl+z).              |
 
       ***Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)***
-   </details>
+</details>
 
 11. <details>
     <summary> Crear un grupo con nombre *database* y un gid 50000 y añadirle un usuario *dbadmin1* y ponerle la password redhat</summary>
@@ -128,7 +128,7 @@
           Retype new password: redhat
           passwd: all authentication tokens updated successfully.
        ``` 
-       </details>
+</details>
 
 12. <details>
     <summary>  
@@ -157,7 +157,7 @@
              -M, --maxdays MAX_DAYS        set maximum number of days before password change to MAX_DAYS
              -R, --root CHROOT_DIR         directory to chroot into
              -W, --warndays DÍAS_AVISO     establece los días de aviso de expiración a DÍAS_AVISO
-      </details>
+</details>
 
 13. <details>
     <summary> Enable the dbadmin1 user to use the sudo command to run any command as the superuser.<br>
@@ -168,7 +168,7 @@
     [root@serverb ~]# vim /etc/sudoers.d/dbadmin1
     dbadmin1 ALL=(ALL) ALL
     ```
-    </details>
+</details>
 
 14. <details>
     <summary> Añadir mascara 007 al usuario dbadmin1 </summary>
@@ -180,7 +180,7 @@
     # Para cargar la configuación de .bashrc se usa el comando source
     [dbadmin1@serverb ~]$ source ~/.bashrc
     ```   
-   </details>
+</details>
 
 15. <details>
     <summary> Establezca el usuario dbadmin1 y grupo database de manera recursiva en usuario propietario dentro del directorio de forma recursiva y los permisos de grupo en ejecución. </summary>
@@ -190,17 +190,17 @@
     [dbadmin1@serverb ~]$ chown -R dbadmin1:database /home/dbadmin1/
     [dbadmin1@serverb ~]$ chmod -R g+x /home/dbadmin1
     ```  
-    </details>
+</details>
 
 16. <details>
     <summary> Configurar el directorio /home/dbadmin1/grading/review2 para permitir que los miembros del grupo database puedan crear contenido en él. Todos los demas usuarios deben poder leer y ejecutar. </summary>
-   <br>
+    <br>
    
    ```console
       [dbadmin1@serverb ~]$ chmod g+s /home/dbadmin1/grading/review2
       [dbadmin1@serverb ~]$ chmod 775 /home/dbadmin1/grading/review2
    ```
- </details>
+</details>
 
 17. <details>
     <summary> Asegurarse de que los usuarios en ese directorio /home/dbadmin1/grading/review2 puedan borrar ficheros de los que son propietarios    </summary>
@@ -246,7 +246,7 @@
          [student@servera ~]$
       ```
 </details>
-</details>
+
 
 
 
