@@ -272,7 +272,17 @@
     eth1   ethernet connected              System eth1
     lo     loopback connected (externally) lo
     ```
+</details>
 
+22. <details> 
+    <summary> Create the static connection profile for the ethX interface. Set the network settings statically so that it does not use DHCP. When done, activate that connection profile. <br>    Base the settings IPv4 address 172.25.250.111, Netmask 255.255.255.0 ,Gateway 172.25.250.254, DNS server 172.25.250.254 </summary>
+    <br>
+    
+    ```console
+    nmcli connection add con-name static type ethernet ifname ethX ipv4.addresses '172.25.250.111/24' \
+    ipv4.gateway '172.25.250.254' ipv4.dns '172.25.250.254' ipv4.method manual
+    Connection 'static' (ac8620e6-b77e-499f-9931-118b8b015807) successfully added.
+    ```
 </details>
 
 
