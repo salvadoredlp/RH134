@@ -196,10 +196,10 @@
     <summary> Configurar el directorio /home/dbadmin1/grading/review2 para permitir que los miembros del grupo database puedan crear contenido en él. Todos los demas usuarios deben poder leer y ejecutar. </summary>
     <br>
    
-   ```console
+    ```console
       [dbadmin1@serverb ~]$ chmod g+s /home/dbadmin1/grading/review2
       [dbadmin1@serverb ~]$ chmod 775 /home/dbadmin1/grading/review2
-   ```
+    ```
 </details>
 
 17. <details>
