@@ -159,6 +159,14 @@
 
       </details>
 
-11. <details>
-    <summary> Pulsar</summary>
+13. <details>
+    <summary> Enable the dbadmin1 user to use the sudo command to run any command as the superuser.<br>
+         &nbsp;&nbsp;&nbsp;&nbsp;Use the vim /etc/sudoers.d/dbadmin1 command to create the file and add the following content:</summary>
+    <br>
+
+    ```console
+    [root@serverb ~]# vim /etc/sudoers.d/dbadmin1
+    dbadmin1 ALL=(ALL) ALL
+    ```
+    
 </details>
