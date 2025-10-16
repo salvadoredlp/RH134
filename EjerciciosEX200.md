@@ -62,7 +62,8 @@
      [student@serverb ~]$ ls -l grading/grade1
      -rw-r--r--. 2 student student 0 Mar 6 16:45 grading/grade1
    ```
-
+   </details>
+   
 8. <details>
    <summary> Crear un soft link o enlace simbolico de /home/student/softcopy /home/student/gading/grade2 </summary>
    <br>
@@ -72,7 +73,6 @@
      [student@serverb ~]$ ls -l softcopy
      lrwxrwxrwx. 1 student student 14 Mar 6 17:58 softcopy -> grading/grade2
    ```
-   
 </details>
 
 9. <details>
@@ -111,6 +111,7 @@
       | 20    | TSTP (Keyboard stop)     | A diferencia de SIGSTOP, puede bloquearse, ignorarse o manipularse. Enviado al presionar una secuencia de teclas de suspensión (Ctrl+z).              |
 
       ***Se recomienda enviar primero SIGTERM (15), a continuación intentar con SIGINT(2) y, solo si falla en ambos casos, volver a intentar con SIGKILL (9)***
+   </details>
 
 11. <details>
     <summary> Crear un grupo con nombre *database* y un gid 50000 y añadirle un usuario *dbadmin1* y ponerle la password redhat</summary>
@@ -127,7 +128,7 @@
           Retype new password: redhat
           passwd: all authentication tokens updated successfully.
        ``` 
-    </details>
+       </details>
 
 12. <details>
     <summary>  
@@ -156,7 +157,6 @@
              -M, --maxdays MAX_DAYS        set maximum number of days before password change to MAX_DAYS
              -R, --root CHROOT_DIR         directory to chroot into
              -W, --warndays DÍAS_AVISO     establece los días de aviso de expiración a DÍAS_AVISO
-
       </details>
 
 13. <details>
@@ -168,6 +168,7 @@
     [root@serverb ~]# vim /etc/sudoers.d/dbadmin1
     dbadmin1 ALL=(ALL) ALL
     ```
+    </details>
 
 14. <details>
     <summary> Añadir mascara 007 al usuario dbadmin1 </summary>
@@ -178,9 +179,8 @@
     [dbadmin1@serverb ~]$ echo "umask 007" >> .bashrc
     # Para cargar la configuación de .bashrc se usa el comando source
     [dbadmin1@serverb ~]$ source ~/.bashrc
-    ```
-       
-</details>
+    ```   
+   </details>
 
 15. <details>
     <summary> Establezca el usuario dbadmin1 y grupo database de manera recursiva en usuario propietario dentro del directorio de forma recursiva y los permisos de grupo en ejecución. </summary>
@@ -189,12 +189,12 @@
     ```console
     [dbadmin1@serverb ~]$ chown -R dbadmin1:database /home/dbadmin1/
     [dbadmin1@serverb ~]$ chmod -R g+x /home/dbadmin1
-    ```
-    
-</details>
+    ```  
+    </details>
 
 16. <details>
     <summary> Configurar el directorio /home/dbadmin1/grading/review2 para permitir que los miembros del grupo database puedan crear contenido en él. Todos los demas usuarios deben poder leer y ejecutar. </summary>
+   <br>
    
    ```console
       [dbadmin1@serverb ~]$ chmod g+s /home/dbadmin1/grading/review2
@@ -245,7 +245,7 @@
          ...output omitted...
          [student@servera ~]$
       ```
-
+</details>
 </details>
 
 
