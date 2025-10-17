@@ -285,4 +285,38 @@ sqlite3; \
 fi
 ```
 
+### Expresiones regulares y expresiones extendidas ###
+
+| Basic Syntax | Extended Syntax | Descripción                                                                 |
+|--------------|-----------------|------------------------------------------------------------------------------|
+| `.`          | `.`             | Coincide con cualquier carácter individual                                  |
+|              | `?`             | El elemento anterior es opcional y aparece como máximo una vez              |
+| `*`          | `*`             | El elemento anterior aparece cero o más veces                               |
+|              | `+`             | El elemento anterior aparece una o más veces                                |
+| `\{n\}`      | `{n}`           | El elemento anterior aparece exactamente n veces                            |
+| `\{n,\}`     | `{n,}`          | El elemento anterior aparece n o más veces                                  |
+| `\{,m\}`     | `{,m}`          | El elemento anterior aparece como máximo m veces                            |
+| `\{n,m\}`    | `{n,m}`         | El elemento anterior aparece al menos n veces, pero no más de m veces       |
+| `[:alnum:]`  | `[:alnum:]`     | Caracteres alfanuméricos: letras y dígitos (`[0-9A-Za-z]`)                   |
+| `[:alpha:]`  | `[:alpha:]`     | Caracteres alfabéticos (`[A-Za-z]`)                                         |
+| `[:blank:]`  | `[:blank:]`     | Espacio y tabulador                                                         |
+| `[:cntrl:]`  | `[:cntrl:]`     | Caracteres de control (ASCII 000–037 y 177)                                 |
+| `[:digit:]`  | `[:digit:]`     | Dígitos (`0–9`)                                                             |
+| `[:graph:]`  | `[:graph:]`     | Caracteres gráficos: alfanuméricos y puntuación                            |
+| `[:lower:]`  | `[:lower:]`     | Letras minúsculas (`a–z`)                                                   |
+| `[:print:]`  | `[:print:]`     | Caracteres imprimibles: alfanuméricos, puntuación y espacio                 |
+| `[:punct:]`  | `[:punct:]`     | Caracteres de puntuación (`!"#$%&'()*+,-./:;<=>?@[\]^_{|}~`)                |
+| `[:space:]`  | `[:space:]`     | Caracteres de espacio: tab, newline, vertical tab, form feed, carriage return, espacio |
+| `[:upper:]`  | `[:upper:]`     | Letras mayúsculas (`A–Z`)                                                   |
+| `[:xdigit:]` | `[:xdigit:]`    | Dígitos hexadecimales (`0–9`, `A–F`, `a–f`)                                  |
+| `\b`         | `\b`            | Coincide con el borde de una palabra                                        |
+| `\B`         | `\B`            | Coincide si no está en el borde de una palabra                              |
+| `\<`         | `\<`            | Coincide con el inicio de una palabra                                       |
+| `\>`         | `\>`            | Coincide con el final de una palabra                                        |
+| `\w`         | `\w`            | Coincide con un carácter de palabra (`[_[:alnum:]]`)                        |
+| `\W`         | `\W`            | Coincide con un carácter no de palabra (`[^_[:alnum:]]`)                    |
+| `\s`         | `\s`            | Coincide con espacio en blanco (`[[:space:]]`)                              |
+|              |                 | Coincide con no espacio en blanco (`[^[:space:]]`)                          |
+
+
 
