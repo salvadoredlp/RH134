@@ -485,3 +485,64 @@ destinatario developer@example.com en cada día de trabajo (lunes a viernes), a 
 
 ***date -d "last day" +%a*** último día
 ***date -d "next day" +%a*** Siguiente día
+
+/etc/crontab.d/ Es donde se colocan los trabajos recurrentes del sistema para evitar que alguna actulizacion sobreescriba /etc/crontab
+
+Se colocan aquí los scripts agrupados relacionados en un solo archivo.
+
+Tambien existen directorios que incluyen para incluir  scripts para ejecutarse cada día, semana y mes.
+
+/etc/cron.hourly
+/etc/cron.daily
+/etc/cron.weeekly
+/etc/cron.monthly
+
+*/etc/anacrontab* tambien se usa para configuar trabajos diarios, semanales y mensuales.
+
+Los trabajos programados en /etc/anacrontab se ejecutaran aunque en el momento en el que se tendrian que ejecutar el sistema no este encendido.
+
+Tienen cuatro campos 
+
+*Period in days* que define el intervalo en días para el trabajo que se ejecuta en una programación recurrente. Este campo acepta un valor entero o macro. Por ejemplo, la macro @daily es equivalente al entero 1, lo que ejecuta el trabajo diariamente. De manera similar, la macro @weekly es equivalente
+al entero 7, lo que ejecuta el trabajo semanalmente.
+*Delay in minutes* Define el tiempo que el daemon crond debe esperar antes de iniciar el trabajo.
+*Job identifier* Identifica el nombre único del trabajo en los mensajes de registro.
+*Command* El comando que se ejecutará.
+
+#### Temporizador systemd #### 
+
+El paquete sysstat proporciona la unidad de temporizador systemd, llamada el servicio
+sysstat-collect.timer, para recopilar estadísticas del sistema cada 10 minutos. En la
+siguiente salida, se muestra el contenido del archivo de configuración /usr/lib/systemd/
+system/sysstat-collect.timer.
+
+```
+...output omitted...
+[Unit]
+Description=Run system activity accounting tool every 10 minutes
+[Timer]
+OnCalendar=*:00/10
+[Install]
+WantedBy=sysstat.service
+```
+
+La opción OnCalendar=*:00/10 significa que esta unidad de temporizador activa la unidad
+sysstat-collect.service correspondiente cada 10 minutos. Puede especificar intervalos de
+tiempo más complejo
+
+Para configurar el temporzador systemd  que llama al servicio sysstat-collector.timer se hace en el fichero ubicado en /usr/lib/systemd/system/sysstat-collect.timer
+Se crea una copia del archivo de configuración  en el directorio /etc/systemd/system y se modifican esos ya que los otros systemd los volvera a su contenido original al iniciarse.
+
+Para activar la unidad temporizador primero cambiar el archivo de configuración de la unidad del temporizador, use el comando systemctl daemon-reload para asegurar que la unidad del temporizador systemd cargue los cambios.
+
+```
+[root@host ~]# systemctl daemon-reload
+```
+
+Después de recargar la configuración del daemon systemd, use el comando systemctl para activar la unidad del temporizador.
+
+```
+[root@host ~]# systemctl enable --now <unitname>.timer
+```
+
+
