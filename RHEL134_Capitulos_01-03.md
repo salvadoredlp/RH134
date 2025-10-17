@@ -156,19 +156,16 @@ especiales, como si el archivo es un enlace simbólico (-L) o si el usuario tien
 |                    | `-c`           | Es un archivo de carácter especial                                          |
 |                    | `-p`           | Es un pipe (FIFO)                                                           |
 |                    | `-t`           | El descriptor de archivo (FD) está asociado a un terminal                   |
-
 | 🔤 Cadenas         | `=`            | Las cadenas son iguales                                                    |
 |                    | `!=`           | Las cadenas son distintas                                                  |
 |                    | `-z`           | La cadena está vacía                                                       |
 |                    | `-n`           | La cadena no está vacía                                                    |
-
 | 🔢 Números         | `-eq`          | Igualdad numérica                                                           |
 |                    | `-ne`          | Desigualdad numérica                                                       |
 |                    | `-gt`          | Mayor que                                                                  |
 |                    | `-ge`          | Mayor o igual que                                                          |
 |                    | `-lt`          | Menor que                                                                  |
 |                    | `-le`          | Menor o igual que                                                          |
-
 | 🔗 Lógicos         | `!`            | Negación                                                                   |
 |                    | `-a`           | AND lógico (obsoleto, usar `&&` mejor)                                     |
 |                    | `-o`           | OR lógico (obsoleto, usar `||` mejor)                                      |
