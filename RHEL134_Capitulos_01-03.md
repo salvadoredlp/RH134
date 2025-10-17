@@ -335,4 +335,43 @@ chrony 662 0.0 0.1 29440 2468 ? S 10:560:00 /usr/sbin/chronyd
 | `-e`       | Permite usar varias expresiones regulares con lógica OR (`-e expr1 -e expr2`)                |
 | `-E`       | Usa sintaxis de expresión regular **extendida** en lugar de la básica                        |
 
+Ejemplo 
+
+```console
+[user@host ~]$ grep -i serverroot /etc/httpd/conf/httpd.conf
+# with "/", the value of ServerRoot is prepended -- so 'log/access_log'
+# with ServerRoot set to '/www' will be interpreted by the
+# ServerRoot: The top of the directory tree under which the server's
+# ServerRoot at a non-local disk, be sure to specify a local disk on the
+# same ServerRoot for multiple httpd daemons, you will need to change at
+ServerRoot "/etc/httpd
+```
+
+Ejemplos , elimina las lineas que comienzan con # o ;
+La opción -v muestra las lineas que no coinciden con la expreisión.
+
+```console
+[user@host ~]$ grep -v '^[#;]' /etc/systemd/system/multi-user.target.wants/rsyslog.service
+```
+
+Se pueden usar varias expresiones regulares con la opción -e , sera como si se pusiera un OR entre ellas
+Para usar un AND habría que pasar la salida de uno de los greps con una expresiones por una tuberia a otro grep con otra expresión.
+
+```console
+[root@host ~]# cat /var/log/secure | grep -e 'pam_unix' -e 'user root' -e 'Accepted publickey' | less
+Mar 4 03:31:41 localhost passwd[6639]: pam_unix(passwd:chauthtok): password
+changed for root
+Mar 4 03:32:34 localhost sshd[15556]: Accepted publickey for devops from
+10.30.0.167 port 56472 ssh2: RSA SHA256:M8ikhcEDm2tQ95Z0o7ZvufqEixCFCt
++wowZLNzNlBT0
+Mar 4 03:32:34 localhost systemd[15560]: pam_unix(systemd-user:session): session
+opened for user devops(uid=1001) by (uid=0)
+``` 
+
+Las expresiones se pueden usar dentro de ***vim** y ***less*** despues de pulsar /
+Luego se pulsa N para encontrar la siguiente coincidencia.
+
+
+
+
 
