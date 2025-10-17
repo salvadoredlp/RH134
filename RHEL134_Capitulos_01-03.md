@@ -371,7 +371,5 @@ opened for user devops(uid=1001) by (uid=0)
 Las expresiones se pueden usar dentro de ***vim** y ***less*** despues de pulsar /
 Luego se pulsa N para encontrar la siguiente coincidencia.
 
-
-
-
+PÁGINA 37 38
 
