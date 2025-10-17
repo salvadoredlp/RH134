@@ -354,3 +354,16 @@
     ```
 </details>
 
+---
+
+26. <details>
+    <summary> Cree un scrit que nos diga cuantos usuarios ay conectados al sistema y que se ejecute diariamente y ponga un mensaje de cuantos usuarios hay conectados en el fichero /var/log </summary>
+    <br>
+
+    Crear el fichero /etc/cron.daily/ussercount
+    
+    ```console
+    #!/bin/bash
+      USERCOUNT=$(w -h | wc -l)
+   logger "There are currently ${USERCOUNT} active users"
+</details>
