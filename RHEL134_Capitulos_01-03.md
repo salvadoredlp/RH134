@@ -371,5 +371,65 @@ opened for user devops(uid=1001) by (uid=0)
 Las expresiones se pueden usar dentro de ***vim** y ***less*** despues de pulsar /
 Luego se pulsa N para encontrar la siguiente coincidencia.
 
-PÁGINA 37 38
+### Programación de un trabajo en diferido ###
+
+***at TIMESPEC***
+
+Si solo pones eso luego tendremos que escribir las tareas que queremos que ejecute a la hora indicada para terminar la entrada de tareas pulsar CTRL+D.
+
+Si no lo podremos redirigir con < , podemos intrudicr todas las tareas en un script y luego redirigirlo a at.
+
+```console
+[user@host ~]$ date
+Wed May 18 21:01:18 CDT 2022
+[user@host ~]$ at 21:03 < myscript
+job 3 at Wed May 18 21:03:00 2022
+[user@host ~]$ at 21:00 < myscript
+job 4 at Thu May 19 21:00:00 2022
+```
+
+at admite horas de tiempo natural como 
+
+• now +5min
+• teatime tomorrow (la hora del té es 16:00)
+• noon +4 days
+• 5pm august 3 2021
+
+***atq*** o ***at -l***  Para ver los trabajos pendientes.
+
+***at -c JOBNUMBER*** Para inspeccionar un trabajo especifico.
+
+***atrm JOBNUMBER*** Elimina un trabajo programado
+
+Ejemplo de uso
+
+```console
+[student@servera ~]$ echo "date >> /home/student/myjob.txt" | at now +2min
+warning: commands will be executed using /bin/sh
+job 1 at Thu Feb 16 18:51:16 2023
+[student@servera ~]$ atq
+1
+Thu Feb 16 18:51:16 2023 a student
+[student@servera ~]$ watch atq
+Every 2.0s: atq
+servera.lab.example.com: Thu Feb 16 17:58:50 2023
+1
+Thu Feb 16 18:51:16 2023 a student
+```
+
+***at -q LETRACOLA*** permite varias colas de trabajos, hasta 26.
+
+Ejemplo , cola g.
+
+```console
+[student@servera ~]$ at -q g teatime
+warning: commands will be executed using /bin/sh
+at> echo "It's teatime" >> /home/student/tea.txt
+at> Ctrl+d
+job 2 at Fri Feb 17 16:00:00 2023
+```
+
+
+
+PÁGINA 45 PÁINA 43
 
