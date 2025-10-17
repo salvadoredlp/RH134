@@ -429,7 +429,59 @@ at> Ctrl+d
 job 2 at Fri Feb 17 16:00:00 2023
 ```
 
+***crontab*** Sirve para programar trabajos recurrentes . Cada usiario tiene su propio crontab que se accede mediante la opcion -e de crontab
 
+***crontab -l*** Detallar los trabajos del usuario actual
+***crontab -r*** Elimina todos los trabajos del usuario actual
+***crontab -e*** Edita los trabajos del usuario actual
+***crontab filename*** Eliminar todos los trabajos y reemplazarlos con los leídos de nombre de archivo. Este comando sa la entrada stdin cuando no se especifica ningún archivo.
 
-PÁGINA 45 PÁINA 43
+***crontab -u*** Un usuario con privilegios puede gestionar los trabajos de otro usuario.
 
+***No se recomienda usar crontab para gestionar los trabajos del root***
+
+Al invocar crontab -e se abrira el comando que indicque en la variable de entorno EDITOR
+
+Se usaran las variables 
+SHELL para indicar la shell que ejecutara el trabajo y la variable MAILTO para indicar quien recibira la salida enviada por correo.
+
+los campos del crontab son 
+
+• Minutes (Minutos)
+• Hours (Horas)
+• Day of month (Día del mes)
+• Month (Mes)
+• Day of week (Día de la semana)
+• Comando
+
+Se usa el carácter * para ejecutar en todas las instancias posibles del campo.
+
+• Un número para especificar la cantidad de minutos u horas, una fecha o un día de la semana.
+Para los días de semana, 0 equivale a domingo, 1 equivale a lunes, 2 equivale a martes, etc. 7
+también equivale a domingo.
+• x-y para un rango, que incluye los valores x y y.
+• x,y para listas. Las listas también pueden incluir rangos, por ejemplo, 5,10-13,17 en la columna Minutes, para indicar que un trabajo debe ejecutarse a los 5 minutos, a los 10 minutos, a los 11 minutos, a los 12 minutos, a los 13 minutos y a los 17 minutos de la hora.
+• */x indica un intervalo de x, por ejemplo, */7 en la columna Minutes ejecuta un trabajo exactamente cada siete minutos.
+
+Si se usan abreviaturas en inglés de tres letras para los meses o los días de la semana, por ejemplo, Jan (enero), Feb (febrero) y Mon (lunes), Tue (martes).
+
+```
+*/5 9-16 * Jul 5 echo "Chime"
+```
+
+El rango de horas 9-16 precedente significa que el temporizador de trabajo comienza a la novena
+hora (09:00) y continúa hasta el final de la decimosexta hora (16:59). El trabajo comienza a
+ejecutarse a las 09:00 con la última ejecución a las 16:55 porque a cinco minutos de las 16:55
+es 17:00 que está más allá del alcance de las horas dadas.
+
+Los trabajos en cron se ejecutan en segundo plano y la salida se envia por mail si se tiene configurado.
+
+El siguiente trabajo ejecuta el comando mutt para enviar el mensaje de correo Checking in al
+destinatario developer@example.com en cada día de trabajo (lunes a viernes), a las 9:00 a. m. El caracter % en crontab significa salto de linea.
+
+```
+0 9 * * 1-5 mutt -s "Checking in" developer@example.com % Hi there, just checking in.
+```
+
+***date -d "last day" +%a*** último día
+***date -d "next day" +%a*** Siguiente día
