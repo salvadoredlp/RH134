@@ -140,6 +140,7 @@ otra cadena de texto, o si la cadena tiene una longitud cero (z) o un valor dist
 (n). También puede probar si existe un archivo regular (-f) o directorio (-d) y algunos atributos
 especiales, como si el archivo es un enlace simbólico (-L) o si el usuario tiene permisos de lectura
 (-r).
+<br>
 
 | Tipo de prueba     | Operador       | Descripción                                                                 |
 |--------------------|----------------|-----------------------------------------------------------------------------|
@@ -172,6 +173,7 @@ especiales, como si el archivo es un enlace simbólico (-L) o si el usuario tien
 |                    | `-a`           | AND lógico (obsoleto, usar `&&` mejor)                                     |
 |                    | `-o`           | OR lógico (obsoleto, usar `||` mejor)                                      |
 
+<br>
 ```console
 [user@host ~]$ test 1 -gt 0 ; echo $?
 0
