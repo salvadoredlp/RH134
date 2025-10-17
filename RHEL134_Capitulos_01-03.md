@@ -315,5 +315,24 @@ fi
 | `\s`         | `\s`            | Coincide con espacio en blanco (`[[:space:]]`)                              |
 |              |                 | Coincide con no espacio en blanco (`[^[:space:]]`)                          |
 
+***grep*** puede procesar la salida de otros comandos mediante el uso de un carácter (|)
+
+```console
+[root@host ~]# ps aux | grep chrony
+chrony 662 0.0 0.1 29440 2468 ? S 10:560:00 /usr/sbin/chronyd
+```
+***opciones del comando grep***
+
+***Tabla de opciones de grep comunes***
+
+| Opción     | Función                                                                                      |
+|------------|-----------------------------------------------------------------------------------------------|
+| `-i`       | Usa la expresión regular sin distinguir entre mayúsculas y minúsculas                        |
+| `-v`       | Muestra solo las líneas que **no** contienen coincidencias con la expresión regular          |
+| `-r`       | Busca coincidencias de forma recursiva en archivos y directorios                             |
+| `-A NUMBER`| Muestra `NUMBER` líneas **después** de la coincidencia                                       |
+| `-B NUMBER`| Muestra `NUMBER` líneas **antes** de la coincidencia                                         |
+| `-e`       | Permite usar varias expresiones regulares con lógica OR (`-e expr1 -e expr2`)                |
+| `-E`       | Usa sintaxis de expresión regular **extendida** en lugar de la básica                        |
 
 
