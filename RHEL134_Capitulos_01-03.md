@@ -12,7 +12,7 @@ El script tendra que tener permiso de ejecución . Si el directorio donde coloca
 El caracter \ anula el significado especial al caracter que le sigue.
 
 ```console
-user@host ~]$ echo # not a comment
+ user@host ~]$ echo # not a comment
 [user@host ~]$ echo \# not a comment
 # not a comment
 ```
