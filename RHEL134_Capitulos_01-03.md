@@ -811,3 +811,28 @@ lines 1996-2043/2043 (END) q
 [root@host ~]# journalctl --since "-1 hour"
 ...output omitted...
 ```
+
+***journalctl -o verbose*** Salida mas extensa. Muy util para corregir errores.
+
+```console
+[root@host ~]# journalctl -o verbose
+Tue 2022-03-15 05:10:32.625470 EDT [s=e7623387430b4c14b2c71917db58e0ee;i...]
+_BOOT_ID=beaadd6e5c5448e393ce716cd76229d4
+_MACHINE_ID=4ec03abd2f7b40118b1b357f479b3112
+PRIORITY=6
+SYSLOG_FACILITY=3
+SYSLOG_IDENTIFIER=systemd
+...
+
+```
+
+Se puede refinar mas la busqueda  dentro de journactl
+
+```console
+[root@host ~]# journalctl _SYSTEMD_UNIT=sshd.service _PID=2110
+Mar 15 04:42:16 host.lab.example.com sshd[2110]: Accepted
+publickey for root from 172.25.250.254 port 46224 ssh2: RSA
+SHA256:1UGybTe52L2jzEJa1HLVKn9QUCKrTv3ZzxnMJol1Fro
+Mar 15 04:42:16 host.lab.example.com sshd[2110]: pam_unix(sshd:session): session
+opened for user root(uid=0) by (uid=0)
+```
