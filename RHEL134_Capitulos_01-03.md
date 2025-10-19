@@ -784,6 +784,11 @@ Con la opción ***-p*** se indica la facilitie (prioridad)
 ***journalctl -f*** Muestra los cambios en tiempo real, Ctrl+C para salir.
 ***journalctl -p prioridad*** Muestra las entradas con una prioridad determinada.
 ***journalctl -u nombre de una unidad***
+***journalctl -b 1*** No muestra las entradas del primer reinicio nada mas , si ponemos un 2 del segundo reinicio ..
+***journalctl --list-booots*** Muestra los eventos de arranque del sistema que ha habido
+***journalctl -b*** Muestra los registros del reiniicio actual
+
+
     ```
       $ journalctl -u sshd.service
     ``` 
@@ -836,3 +841,43 @@ SHA256:1UGybTe52L2jzEJa1HLVKn9QUCKrTv3ZzxnMJol1Fro
 Mar 15 04:42:16 host.lab.example.com sshd[2110]: pam_unix(sshd:session): session
 opened for user root(uid=0) by (uid=0)
 ```
+Los diarios del sistema se guardan en /run/log y se borra al reninicio.
+
+Eso se configura en /etc/systemd/journald.conf en la sección Storage
+
+Los valores que puede tomar 
+
+• persistent: almacena los diarios en el directorio /var/log/journal, que no se borra en los reinicios. Si el directorio /var/log/journal no existe, el servicio systemd-journald lo
+crea.
+• volatile: almacena los diarios en el directorio /run/log/journal volátil. Puesto que el sistema de archivos /run es temporal y solo existe en la memoria de tiempo de ejecución, los
+datos almacenados en él, incluidos los diarios (journals) del sistema, se borran en el reinicio.  
+• auto: si el directorio /var/log/journal existe, el servicio systemd-journald usa el almacenamiento persistente; de lo contrario, usa el almacenamiento volátil. Esta acción es la
+predeterminada si no establece el parámetro Storage.  
+• none: no usa ningún almacenamiento. El sistema descarta todos los registros, pero aún puede reenviarlos  
+
+Los límites actuales en cuanto al tamaño del diario se registran cuando inicia el proceso systemd-journald. En el siguiente resultado de comando, se muestran las entradas del diario que reflejan los límites de tamaño actuales:
+
+```console
+[user@host ~]$ journalctl | grep -E 'Runtime Journal|System Journal'
+Mar 15 04:21:14 localhost systemd-journald[226]: Runtime Journal (/run/log/journal/4ec03abd2f7b40118b1b357f479b3112) is 8.0M, max 113.3M, 105.3M free.
+Mar 15 04:21:19 host.lab.example.com systemd-journald[719]: Runtime Journal (/run/log/journal/4ec03abd2f7b40118b1b357f479b3112) is 8.0M, max 113.3M, 105.3M free.
+Mar 15 04:21:19 host.lab.example.com systemd-journald[719]: System Journal (/run/log/journal/4ec03abd2f7b40118b1b357f479b3112) is 8.0M, max 4.0G, 4.0G free.
+```
+
+### Configuración de diarios del sistema persistentes 
+
+Se crea el directorio /var/log/journal 
+
+Se establece en /etc/systemd/journald.conf y se edita y cambia el conteniido de la variable Storage= por ***persistent***
+
+Despues habra que reniciar el servicio 
+
+```console
+[root@host ~]# systemctl restart systemd-journald
+```
+
+### Admistración de zonas horarias
+
+página 99
+
+
