@@ -365,5 +365,7 @@
     ```console
     #!/bin/bash
       USERCOUNT=$(w -h | wc -l)
-   logger "There are currently ${USERCOUNT} active users"
+      logger "There are currently ${USERCOUNT} active users"
+    ```
+    
 </details>
