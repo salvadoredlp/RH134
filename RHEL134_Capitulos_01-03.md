@@ -545,6 +545,12 @@ Después de recargar la configuración del daemon systemd, use el comando system
 [root@host ~]# systemctl enable --now <unitname>.timer
 ```
 
+
+
+## 🧹 Gestión de Archivos Temporales en RHEL
+
+Red Hat Enterprise Linux utiliza `systemd-tmpfiles` para gestionar archivos y directorios temporales de forma estructurada y automatizada.
+
 Para editar la configuración de la unidad systemd-tmpfiles-clean.timer
 
 ```console
@@ -573,11 +579,6 @@ Cuando se cambia un archivo de configuración de una unidad  hay que recargarlos
 ```console
 [root@host ~]# systemctl daemon-reload
 ```
-
-# 🧹 Gestión de Archivos Temporales en RHEL
-
-Red Hat Enterprise Linux utiliza `systemd-tmpfiles` para gestionar archivos y directorios temporales de forma estructurada y automatizada.
-
 ---
 
 ## 🗂️ Ubicaciones comunes de archivos temporales
@@ -636,3 +637,177 @@ Argumento	Extra (ej. destino de enlace simbólico)
 d /run/systemd/seats 0755 root root -
 D /home/student 0700 student student 1d
 L /run/fstablink - root root - /etc/fstab
+
+Copiaremos las configuraciones de /usr/lib/tmpfiles.d/*.conf a /etc/tmpfiles.d/*.conf y ahí las modificaremos 
+
+Por ejemplop 
+/etc/tmpfiles.d/tmp.conf file should appear as follows:
+q /tmp 1777 root root 5d
+
+Para verificar que funciona y el fichero esta bien escrito 
+
+```console
+[root@servera ~]# systemd-tmpfiles --clean /etc/tmpfiles.d/tmp.conf
+[root@servera ~]# echo $?
+```
+
+### Registro del sistema
+
+El servicio systemd-journald reestructura los registros en un formato estándar y los escribe en un diario de sistema indexado y estructurado. De forma predeterminada, este diario se almacena en un sistema de archivos que no persiste en los reinicios.
+
+El servicio rsyslog lee los mensajes de syslog recibidos por el servicio systemd-journald desde el diario (journal) a medida que llegan. El servicio rsyslog procesa los eventos de syslog, los registra en sus archivos de registro o los reenvía a otros servicios de acuerdo con su propia configuración.
+
+El servicio rsyslog ordena y escribe mensajes de syslog en los archivos de registro que no persisten en los reinicios en el directorio ***/var/log***.
+
+# 📋 Archivos de registro del sistema seleccionados
+
+| Archivo de registro      | Tipo de mensajes almacenados                                                                 |
+|--------------------------|----------------------------------------------------------------------------------------------|
+| `/var/log/messages`      | La mayoría de los mensajes de syslog. Excluye autenticación, correo, cron y depuración.     |
+| `/var/log/secure`        | Mensajes de syslog relacionados con eventos de seguridad y autenticación.                   |
+| `/var/log/maillog`       | Mensajes de syslog relacionados con el servidor de correo.                                  |
+| `/var/log/cron`          | Mensajes de syslog relacionados con la ejecución de trabajos programados.                   |
+| `/var/log/boot.log`      | Mensajes de la consola (no syslog) relacionados con el inicio del sistema.                  |
+
+📌 Algunas aplicaciones no usan `syslog`.  
+Por ejemplo, **Apache** guarda sus registros en subdirectorios dentro de `/var/log`.
+
+***syslog*** Sirve para registrar eventos en el sistema
+
+### 🧾 Descripción general de las instalaciones de syslog
+### Facilities
+
+| Código   | Instalación   | Descripción de la instalación                          |
+|----------|---------------|--------------------------------------------------------|
+| 0        | kern          | Mensajes del kernel                                    |
+| 1        | user          | Mensajes de nivel de usuario                           |
+| 2        | mail          | Mensajes del sistema de correo                         |
+| 3        | daemon        | Mensajes de daemons del sistema                        |
+| 4        | auth          | Mensajes de autenticación y seguridad                  |
+| 5        | syslog        | Mensajes de syslog internos                            |
+| 6        | lpr           | Mensajes de la impresora                               |
+| 7        | news          | Mensajes de noticias de la red                         |
+| 8        | uucp          | Mensajes del protocolo UUCP                            |
+| 9        | cron          | Mensajes del daemon de reloj                           |
+| 10       | authpriv      | Mensajes de autorización ajenos al sistema             |
+| 11       | ftp           | Mensajes de protocolo FTP                              |
+| 16–23    | local0–local7 | Mensajes locales personalizados                        |
+
+### 📊 Descripción general de las prioridades de syslog
+### Priorities
+
+| Código   | Prioridad | Descripción de la prioridad                        |
+|----------|-----------|----------------------------------------------------|
+| 0        | emerg     | El sistema no se puede usar                        |
+| 1        | alert     | Se debe implementar una acción de inmediato        |
+| 2        | crit      | Condición crítica                                  |
+| 3        | err       | Condición de error no crítica                      |
+| 4        | warning   | Condición de advertencia                           |
+| 5        | notice    | Evento normal, pero importante                     |
+| 6        | info      | Evento informativo                                 |
+| 7        | debug     | Mensaje de nivel de depuración                     |
+
+Para ver las prioridades facilities  ***#man 2 syslog***
+
+Se configuran en /etc/rsyslog.conf
+
+Enviara todos los mensajes con facilitie authriv a /var/log/secure
+```
+authpriv.* /var/log/secure
+```
+En lugar de registrarse en un archivo, también pueden imprimirse en las terminales de todos los usuarios que hayan iniciado sesión. El archivo rsyslog.conf tiene una configuración para imprimir todos los mensajes de syslog con la prioridad emerg en las terminales de todos los usuarios que hayan iniciado sesión.
+
+Ejemplo 
+
+```console
+#### RULES ####
+# Log all kernel messages to the console.
+# Logging much else clutters up the screen.
+#kern.* /dev/console
+
+# Log anything (except mail) of level info or higher.
+# Don't log private authentication messages!
+*.info;mail.none;authpriv.none;cron.none      /var/log/messages
+# The authpriv file has restricted access.
+authpriv.*                                    /var/log/secure
+# Log all the mail messages in one place.
+# El guion no fuerza la escritura en disco y se espera para escribirlo hasta que este disponible. Lo guarda en buffer mientras.
+mail.*                                        -/var/log/maillog
+# Log cron stuff
+cron.*                                        /var/log/cron
+# Everybody gets emergency messages
+*.emerg                                        :omusrmsg:*
+# Save news errors of level crit and higher in a special file.
+uucp,news.crit                                 /var/log/spooler
+# Save boot messages also to boot.log
+local7.*                                        /var/log/boot.log
+```
+
+***logrotate*** El comando logrotate rota los archivos de registro para evitar que ocupen demasiado espacio en el directorio /var/log. Cuando se rota un archivo de registro, se le cambia el nombre con una extensión que indica la fecha de rotación. Por ejemplo, el antiguo archivo /var/log/messages se renombra al archivo /var/log/messages-20220320 cuando se rota el 20-03-2022. 
+
+Después de que el archivo de registro anterior rota, crea un archivo de registro y notifica al servicio
+que escribió el archivo de registro.
+
+### Analisis de entradas de syslog ###
+
+```console
+Mar 20 20:11:48 localhost sshd[1433]: Failed password for student from 172.25.0.10
+port 59344 ssh2
+```
+
+• Mar 20 20:11:48 : registra la marca de tiempo de la entrada de registro.
+• localhost : el host que envía el mensaje de registro.
+• sshd[1433] : el nombre del programa o el proceso y el número de PID que envió el mensaje de
+registro.
+• Failed password for … : el mensaje que se envió.
+
+#### Monitorear logs en tiempo real 
+
+```console
+tail -f /var/log/secure
+```
+
+#### Envio manual de mensajes de syslog 
+
+Con la opción ***-p*** se indica la facilitie (prioridad)
+
+```console
+[root@host ~]# logger -p local7.notice "Log entry created on host"
+```
+
+
+### Buscar eventos en el diario del sistema 
+
+***journalctl*** Para recuperar ficheros del registro del diario. Los usuarios tambien pueden usarlo pero restringe ciertos mensajes que solo pueden accerder root. Pulsar q para salir.
+
+***journalctl -n nºde lineas*** Muestra las últimas lineas del diario de registro del sistema.
+***journalctl -f*** Muestra los cambios en tiempo real, Ctrl+C para salir.
+***journalctl -p prioridad*** Muestra las entradas con una prioridad determinada.
+***journalctl -u nombre de una unidad***
+    ```
+      $ journalctl -u sshd.service
+    ``` 
+Ejemplos , se pueden mostrar de unas fechas a otras determinadas.
+
+```console
+[root@host ~]# journalctl --since today
+...output omitted...
+Mar 15 05:04:20 host.lab.example.com systemd[1]: Started Session 8 of User
+student.
+Mar 15 05:04:20 host.lab.example.com sshd[2255]: pam_unix(sshd:session): session
+opened for user student(uid=1000) by (uid=0)
+Mar 15 05:04:20 host.lab.example.com systemd[1]: Starting Hostname Service...
+Mar 15 05:04:20 host.lab.example.com systemd[1]: Started Hostname Service.
+Mar 15 05:04:50 host.lab.example.com systemd[1]: systemd-hostnamed.service:
+Deactivated successfully.
+Mar 15 05:06:33 host.lab.example.com systemd[2261]: Starting Mark boot as
+successful...
+Mar 15 05:06:33 host.lab.example.com systemd[2261]: Finished Mark boot as
+successful.
+lines 1996-2043/2043 (END) q
+
+[root@host ~]# journalctl --since "2022-03-11 20:30" --until "2022-03-14 10:00"
+...output omitted...
+[root@host ~]# journalctl --since "-1 hour"
+...output omitted...
+```
