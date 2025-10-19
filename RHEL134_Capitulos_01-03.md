@@ -545,4 +545,94 @@ Después de recargar la configuración del daemon systemd, use el comando system
 [root@host ~]# systemctl enable --now <unitname>.timer
 ```
 
+Para editar la configuración de la unidad systemd-tmpfiles-clean.timer
 
+```console
+[user@host ~]$ systemctl cat systemd-tmpfiles-clean.timer
+# /usr/lib/systemd/system/systemd-tmpfiles-clean.timer
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+# This file is part of systemd.
+#
+#
+#
+systemd is free software; you can redistribute it and/or modify it
+under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 2.1 of the License, or
+(at your option) any later version.
+[Unit]
+Description=Daily Cleanup of Temporary Directories
+Documentation=man:tmpfiles.d(5) man:systemd-tmpfiles(8)
+ConditionPathExists=!/etc/initrd-release
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=1d
+```
+Cuando se cambia un archivo de configuración de una unidad  hay que recargarlos con 
+
+```console
+[root@host ~]# systemctl daemon-reload
+```
+
+# 🧹 Gestión de Archivos Temporales en RHEL
+
+Red Hat Enterprise Linux utiliza `systemd-tmpfiles` para gestionar archivos y directorios temporales de forma estructurada y automatizada.
+
+---
+
+## 🗂️ Ubicaciones comunes de archivos temporales
+
+- `/tmp`: Datos transitorios de usuarios y aplicaciones.
+- `/run`: Directorios volátiles en memoria (daemon, usuario).
+- Se limpian automáticamente al reiniciar o perder energía.
+
+---
+
+## ⚙️ systemd-tmpfiles
+
+### Función
+
+- Crea, elimina o ajusta permisos de archivos temporales según configuración.
+
+### Archivos de configuración
+
+| Ruta                          | Propósito                                      |
+|------------------------------|------------------------------------------------|
+| `/usr/lib/tmpfiles.d/`       | Configuración por defecto de paquetes RPM      |
+| `/run/tmpfiles.d/`           | Archivos volátiles usados por daemons          |
+| `/etc/tmpfiles.d/`           | Configuración personalizada del administrador  |
+
+📌 **Precedencia:** `/etc/` > `/run/` > `/usr/lib/`
+
+---
+
+## 🚀 Servicios systemd relacionados
+
+### `systemd-tmpfiles-setup.service`
+
+- Se ejecuta al inicio del sistema.
+- Comando: `systemd-tmpfiles --create --remove`
+
+### `systemd-tmpfiles-clean.timer`
+
+- Limpieza periódica de archivos temporales.
+- Configuración:
+
+```ini
+[Timer]
+OnBootSec=15min         # 15 min después del arranque
+OnUnitActiveSec=1d      # Cada 24h tras la última ejecución
+``` 
+Sintaxis de configuración tmpfiles.d
+
+|Columna	| Descripción |
+Tipo	Acción (d, D, L, Z, etc.)
+Ruta	Ubicación del archivo/directorio
+Modo	Permisos (ej. 0755)
+UID/GID	Propietario y grupo
+Antigüedad	Tiempo máximo antes de purgar (1d, 10d, etc.)
+Argumento	Extra (ej. destino de enlace simbólico)
+
+d /run/systemd/seats 0755 root root -
+D /home/student 0700 student student 1d
+L /run/fstablink - root root - /etc/fstab
