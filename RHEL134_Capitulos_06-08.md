@@ -55,18 +55,89 @@ El metodo recomendado para cambiar etiquetas SELinux a un fichero es
 
 Ejemplo de uso de ***restorecon*** y ***chcon***
 
+  ```console
+    # Se crea un directorio con un contexto de SELinux default_t, que heredó del directorio principal /.
+    [root@host ~]# mkdir /virtual
+    [root@host ~]# ls -Zd /virtual
+    unconfined_u:object_r:default_t:s0 /virtual
+    # El comando chcon define el contexto de archivo del directorio /virtual en el tipo httpd_sys_content_t.
+    [root@host ~]# chcon -t httpd_sys_content_t /virtual
+    [root@host ~]# ls -Zd /virtual
+    unconfined_u:object_r:httpd_sys_content_t:s0 /virtual
+    # La ejecución del comando restorecon restablece el contexto al valor predeterminado de default_t. Observe el mensaje Relabeled.
+    [root@host ~]# restorecon -v /virtual
+    # Relabeled /virtual from unconfined_u:object_r:httpd_sys_content_t:s0 to unconfined_u:object_r:default_t:s0
+    [root@host ~]# ls -Zd /virtual
+    unconfined_u:object_r:default_t:s0 /virtual
+  ```
+
+***semanage fcontext -l*** Lista los contextos existentes
+
+Para definir una etiqueta selinux se suele usar la expresión regular (/.*)?
+
+***semanage fcontext***
+  -a --add      Agregar un registro del tipo de objeto especificado
+  -d --delete   Elimnar un registro del tipo de objeto especificado
+  -l --list     Muestra registros del tipo de objeto especificado
+
+Para añadir una etiqueta selinux a un directorio
+  ```console
+       Add file-context httpd_sys_content_t for everything under /web
+       # semanage fcontext -a -t httpd_sys_content_t "/web(/.*)?"
+       # restorecon -R -v /web
+  ```
+
+### Booleanos de SELinux
+
+Las aplicaciones tienen politicas SELinux especificas para definir su comportamiento  estas pueden incluir opciones que se pueden habilitar o deshabilitar según nos interese . Estas se manejan con los comandos getsebool y setsebool.
+
 ```console
-# Se crea un directorio con un contexto de SELinux default_t, que heredó del directorio principal /.
-[root@host ~]# mkdir /virtual
-[root@host ~]# ls -Zd /virtual
-unconfined_u:object_r:default_t:s0 /virtual
-# El comando chcon define el contexto de archivo del directorio /virtual en el tipo httpd_sys_content_t.
-[root@host ~]# chcon -t httpd_sys_content_t /virtual
-[root@host ~]# ls -Zd /virtual
-unconfined_u:object_r:httpd_sys_content_t:s0 /virtual
-# La ejecución del comando restorecon restablece el contexto al valor predeterminado de default_t. Observe el mensaje Relabeled.
-[root@host ~]# restorecon -v /virtual
-# Relabeled /virtual from unconfined_u:object_r:httpd_sys_content_t:s0 to unconfined_u:object_r:default_t:s0
-[root@host ~]# ls -Zd /virtual
-unconfined_u:object_r:default_t:s0 /virtual
+[root@host ~]# getsebool httpd_enable_homedirs
+httpd_enable_homedirs --> off
 ```
+
+La configuración de booleanos de SELinux con el comando setsebool sin la opción -P es
+temporal y la configuración volverá a los valores persistentes después del reinicio. Vea información
+adicional con el comando semanage boolean -l, que enumera los booleanos de los archivos
+de política, incluido si un booleano es persistente, los valores predeterminados y actuales y una
+breve descripción.
+
+```console
+[root@host ~]# semanage boolean -l | grep httpd_enable_homedirs
+httpd_enable_homedirs
+(off, off) Allow httpd to enable homedirs
+[root@host ~]# setsebool httpd_enable_homedirs on
+[root@host ~]# semanage boolean -l | grep httpd_enable_homedirs
+httpd_enable_homedirs
+(on, off) Allow httpd to enable homedirs
+[root@host ~]# getsebool httpd_enable_homedirs
+httpd_enable_homedirs --> on
+```
+
+Para enumerar solo los booleanos con una configuración actual diferente de la configuración predeterminada en el arranque, use el comando semanage boolean -l -C. Este ejemplo tiene el mismo resultado que el ejemplo anterior, sin requerir el filtrado grep.
+
+```console
+[root@host ~]# semanage boolean -l -C
+SELinux boolean
+State Default Description
+httpd_enable_homedirs
+(on,off) Allow httpd to enable homedirs
+```
+
+En el ejemplo anterior se definió temporalmente el valor actual para el booleano httpd_enable_homedirs en on, hasta que el sistema se reinicia. Para cambiar la configuración predeterminada, use el comando setsebool -P para hacer que la configuración sea persistente.
+
+El siguiente ejemplo define un valor persistente y luego visualiza la información booleana del
+archivo de política.
+
+```console
+[root@host ~]# setsebool -P httpd_enable_homedirs on
+[root@host ~]# semanage boolean -l | grep httpd_enable_homedirs
+httpd_enable_homedirs
+(on,on) Allow httpd to enable homedirs
+```
+
+Use el comando semanage boolean -l -C de nuevo. El booleano se muestra a pesar de que la configuración actual y predeterminada es la misma. Sin embargo, la opción -C coincide cuando la configuración actual es diferente de la configuración predeterminada del último arranque.
+
+Para este ejemplo de httpd_enable_homedirs, la configuración de arranque predeterminada original era off.
+
+
