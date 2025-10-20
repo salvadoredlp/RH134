@@ -60,16 +60,13 @@ Ejemplo de uso de ***restorecon*** y ***chcon***
 [root@host ~]# mkdir /virtual
 [root@host ~]# ls -Zd /virtual
 unconfined_u:object_r:default_t:s0 /virtual
-# El comando chcon define el contexto de archivo del directorio /virtual en el tipo
-httpd_sys_content_t.
+# El comando chcon define el contexto de archivo del directorio /virtual en el tipo httpd_sys_content_t.
 [root@host ~]# chcon -t httpd_sys_content_t /virtual
 [root@host ~]# ls -Zd /virtual
 unconfined_u:object_r:httpd_sys_content_t:s0 /virtual
-# La ejecución del comando restorecon restablece el contexto al valor predeterminado de
-default_t. Observe el mensaje Relabeled.
+# La ejecución del comando restorecon restablece el contexto al valor predeterminado de default_t. Observe el mensaje Relabeled.
 [root@host ~]# restorecon -v /virtual
-# Relabeled /virtual from unconfined_u:object_r:httpd_sys_content_t:s0 to
-unconfined_u:object_r:default_t:s0
+# Relabeled /virtual from unconfined_u:object_r:httpd_sys_content_t:s0 to unconfined_u:object_r:default_t:s0
 [root@host ~]# ls -Zd /virtual
 unconfined_u:object_r:default_t:s0 /virtual
 ```
