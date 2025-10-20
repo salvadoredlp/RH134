@@ -17,6 +17,8 @@
 | `/run/log/               | Es donde se guarda el diario del sistema después de un renicio. Se puede cambiar su ubicación dentro de /etc/systemd/journald.conf  |
 | `/etc/systemd/journald.conf | Configuracióndel diario del sistema |
 | `/etc/selinux/conifg`    | Directorio para configurar el modo de SELINUX = enforcing|permissive del sistema |
+| `/etc/selinux/targeted/contexts/files | Base de datos de etiquetado de archivos |
 
 
-                        
+
+
