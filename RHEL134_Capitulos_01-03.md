@@ -1062,7 +1062,8 @@ Para activar tuned
 Created symlink /etc/systemd/system/multi-user.target.wants/tuned.service → /usr/
 lib/systemd/system/tuned.service.
 ```
-Tuned tiene varios perfilesde ajuste
+
+Tuned tiene varios perfiles de ajuste
 
 ## Perfiles de ajuste distribuidos con tuned
 
@@ -1082,4 +1083,17 @@ Tuned tiene varios perfilesde ajuste
 | `intel-sst`                | Optimizado para sistemas con Intel Speed Select. Úselo como superposición en otros perfiles. |
 | `optimize-serial-console`  | Mejora la respuesta de la consola serial. Úselo como superposición en otros perfiles. |
 
+
+***tuned-adm list*** Lista los perfiles disponibles
+***tuned-adm active*** Para ver el perfil activo
+
+Los perfiles estan en ***/usr/lib/tuned*** no se tocan, se copian a /etc/tuned y ahí se modifican si lo necesitamos.
+Cada perfil tiene un directorio separado y dentro del directorio el archivo de configuración principal tuned.conf
+
+***tuned-adm profile perfil*** Para cambiar de perfil, si no se especifica ningún perfil mostrara info del activo.
+
+***tuned.-adm recommend*** Recomienda el perfil para nuestro sistema
+***tuned-adm off*** Para desactivar el servicio tuned
+
+### Prioridad de los procesos 
 
