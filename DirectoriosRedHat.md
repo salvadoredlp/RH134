@@ -14,8 +14,9 @@
 | `/var/log/maillog`       | Mensajes de syslog relacionados con el servidor de correo.                                  |
 | `/var/log/cron`          | Mensajes de syslog relacionados con la ejecución de trabajos programados.                   |
 | `/var/log/boot.log`      | Mensajes de la consola (no syslog) relacionados con el inicio del sistema.                  |
-| `/run/log/               | Es donde se guarda el diario del sistema después de un renicio. Se puede cambiar su ubicación dentro de /etc/systemd/journald.conf |
+| `/run/log/               | Es donde se guarda el diario del sistema después de un renicio. Se puede cambiar su ubicación dentro de /etc/systemd/journald.conf  |
 | `/etc/systemd/journald.conf | Configuracióndel diario del sistema |
+| `/etc/selinux/conifg`    | Directorio para configurar el modo de SELINUX = enforcing|permissive del sistema |
 
 
                         
