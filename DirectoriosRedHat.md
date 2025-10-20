@@ -18,6 +18,7 @@
 | `/etc/systemd/journald.conf | Configuracióndel diario del sistema |
 | `/etc/selinux/conifg`    | Directorio para configurar el modo de SELINUX = enforcing|permissive del sistema |
 | `/etc/selinux/targeted/contexts/files | Base de datos de etiquetado de archivos |
+| /var/log/audit/audit.log   | Problemas que con SELinux |
 
 
 
