@@ -1,2 +1,2 @@
-### Apuntes Certifiación para el EX200 RHCSA ###
+### Apuntes para Certificación para el EX200 RHCSA ###
 
