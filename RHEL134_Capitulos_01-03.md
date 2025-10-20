@@ -1097,3 +1097,21 @@ Cada perfil tiene un directorio separado y dentro del directorio el archivo de c
 
 ### Prioridad de los procesos 
 
+A mas valor de nice, menor prioridad
+
+Para aplicar un valor nice a un proceso
+
+```console
+[user@host ~]$ nice -n ``
+2740 sleep  15
+```
+
+***renice*** Para cambiar el valor de nice 
+
+```console
+[user@host ~]$ renice -n 19 2740
+2740 (process ID) old priority 15, new priority 19
+```
+
+Tambien se puede cambiar el valor de nice desde el comando ***top*** pulsando la tecla ***r***
+
