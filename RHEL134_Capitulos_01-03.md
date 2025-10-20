@@ -878,6 +878,208 @@ Despues habra que reniciar el servicio
 
 ### Admistración de zonas horarias
 
-página 99
+***timedatectl*** Muestra la hora y su configuración y si esta sincronizado mediante NTP
+
+***timedatectl list-timezones*** Muestra una lista con las zonas horarias
+
+***tzselect*** Comando interactivo que sierve para identificar nuestrra zona horaria correcta
+
+***timedatectl set-timezone Europe/Madrid*** Para poner la zona horaria que nos corresponde
+
+***timedatectl set-time 9:00*** Para poner la hora.  Formato YYYY-MM-DD hh:mm:ss
+
+***timedatectl set-ntp yes/no*** Para configurar  configuracion de la hora con servidores mediante ntp.
+
+***/etc/chrony.conf*** Donde se configura los servidores de ntp y los saltos hacia esos servidores stratum level 
+
+Ejemplo 
+
+``` 
+# Use public servers from the pool.ntp.org project.
+...output omitted...
+server classroom.example.com iburst
+...output omitted...
+```
+
+Luego habra que reiniciar el servicio 
+
+```console
+[root@host ~]# systemctl restart chronyd
+```
+
+Para ver la configuración de los servidores que usa el servicio chronycd 
+
+***chronyc sources -v**** Para ver los servidores horarios en /etc/chrony.conf
+
+
+### Creación de archivos
+
+***tar*** Se usa para comprimir ficheros
+    -c --create Crea un archivo de almacenamiento
+    -t --list Enumera el contenido de un archivo
+    -x --extract extrae un archivo
+    -v --verbose muestra los archivos que se estan archivando o estrayendo durante la operación con tar
+    -f --file Se indica el nombre del fichero para abrir o crear
+    -p o --preserve-permissions : conserva los permisos del archivo original al extraer.
+    --xattrs : habilita el soporte de atributos extendidos y almacena atributos de archivos extendidos.
+    --selinux : habilita el soporte de contexto de SELinux y almacena contextos de archivos de SELinux.
+Las siguientes opciones de compresión del comando tar se usan para seleccionar un algoritmo:
+    -a o --auto-compress : use el sufijo del archivo para determinar el algoritmo que se usará.
+    -z o --gzip : use el algoritmo de compresión gzip, lo que genera un sufijo .tar.gz.
+    -j o --bzip2 : use el algoritmo de compresión bzip2, lo que genera un sufijo .tar.bz2.
+    -J o --xz : use el algoritmo de compresión xz, lo que genera un sufijo .tar.xz.
+
+Crear un fichero . Para incluir los ficheros de un directorio el usuario tiene que tener permiso de lectura sobre esos ficheros, si no los excluye.
+
+```console
+[user@host ~]$ tar -cf mybackup.tar myapp1.log myapp2.log myapp3.log
+[user@host ~]$ ls mybackup.tar
+mybackup.tar
+```
+
+Listar el contenido de un fichero 
+
+```console
+[root@host ~]# tar -tf /root/etc.tar
+etc/
+etc/fstab
+etc/crypttab
+etc/mtab
+...output omitted.
+```
+
+Extraer un ficheros 
+
+```console
+[root@host etcbackup]# tar -xf /root/etc.tar
+#Con la opción -p conservaran los permisos de los ficheros originales en lugar de aplicar la mascara umask del usuario que ejecuta tar
+[user@host scripts]# tar -xpf /home/user/myscripts.tar
+```
+
+Los algoritmos gzip, bzip2 y xz también se implementan como comandos independientes para comprimir archivos individuales sin crear un archivo.
+
+```console
+[user@host ~]$ gzip -l file.tar.gz
+
+[user@host ~]$ xz -l file.xz
+
+```
+
+### Transferencia de archivos 
+
+***sftp user@remotehost*** 
+
+Tiene un help al entrar en el prompt de sftp. Los comandos de sftp precedidos de l se ejecutaran en nuestro host lpwd,lcd,lls,...
+Los comandos put sirve para enviar ficheros al remotehost, get para descargarlos en nuestro host
+
+```console
+ftp> mkdir hostbackup
+sftp> cd hostbackup
+sftp> put /etc/hosts
+Uploading /etc/hosts to /home/remoteuser/hostbackup/hosts
+/etc/hosts
+100% 227
+0.2KB/s
+00:00
+To copy a whole directory tree recursively, use the sftp command -r option. The following
+example recursively copies the /home/user/directory local directory to the remotehost
+machine.
+sftp> put -r directory
+Uploading directory/ to /home/remoteuser/directory
+Entering directory/
+file1
+100%
+sftp> ls -l
+drwxr-xr-x
+2 student student
+32 Mar 21 07:51 directory
+00:00
+sftp> get /etc/yum.conf
+Fetching /etc/yum.conf to yum.conf
+/etc/yum.conf
+sftp> exit
+```
+
+Se puede descargar un fichero con sftp sin entrar en el prompt en una sola linea
+
+```console
+[user@host ~]$ sftp remoteuser@remotehost:/home/remoteuser/remotefile
+Connected to remotehost.
+Fetching /home/remoteuser/remotefile to remotefile
+remotefile
+```
+
+***scp user@host*** Tambien sirve para copiar archivos remotos pero se recomienda usar sftp
+
+#### Sincronizar ficheros y directorios remotos 
+
+***rsync es otra manera de copiar ficheros entre un sistema y otro de forma segura
+-n Hace una simulación de los cambios que hariá rsync al ejecutarlo
+-r recursive
+-l --links Sincroniza enlaces simbolicos
+-p --perms Preserva los permisos
+-t --preserva las marcas de tiempo
+-D --devices Preserva los ficheros de dispositivo 
+-a --archive Modo archivo Es lo mismo que habilitar las opciones anteriores
+
+Tambien se puede sincronizar carpetas donde una de ellas este en otro host
+
+```console
+[root@host ~]# rsync -av /var/log hosta:/tmp
+root@hosta's password: password
+receiving incremental file list
+log/
+log/README
+log/boot.log
+...output omitted...
+sent 9,783 bytes received 290,576 bytes 85,816.86 bytes/sec
+total size is 11,585,690 speedup is 38.57
+```
+
+### Ajuste del rendimiento del sistema 
+
+***tuned*** Sirve para la optimización del sistema . Es un demonio del sistema.
+Por defectoo esta deshabilitado /etc/tuned/tuned-main.conf
+
+```console
+[root@host ~]$ cat /etc/tuned/tuned-main.conf
+...output omitted...
+# Dynamicaly tune devices, if disabled only static tuning will be used.
+dynamic_tuning = 1
+...output omitted...
+# Update interval for dynamic tunings (in seconds).
+# It must be multiply of the sleep_interval.
+update_interval = 10
+...output omitted...
+```
+
+Para activar tuned 
+
+```console
+[root@host ~]$ dnf install tuned
+...output omitted...
+[root@host ~]$ systemctl enable --now tuned
+Created symlink /etc/systemd/system/multi-user.target.wants/tuned.service → /usr/
+lib/systemd/system/tuned.service.
+```
+Tuned tiene varios perfilesde ajuste
+
+## Perfiles de ajuste distribuidos con tuned
+
+| Perfil de ajuste            | Propósito                                                                 |
+|----------------------------|---------------------------------------------------------------------------|
+| `balanced`                 | Ideal para los sistemas que requieren un equilibrio entre ahorro de energía y rendimiento. |
+| `powersave`                | Ajusta el sistema para maximizar el ahorro de energía.                    |
+| `throughput-performance`   | Ajusta el sistema para maximizar el rendimiento.                          |
+| `accelerator-performance`  | Ajusta lo mismo que throughput-performance y también reduce la latencia a menos de 100 μs. |
+| `latency-performance`      | Ideal para los sistemas de servidores que requieren baja latencia a expensas del consumo de energía. |
+| `network-throughput`       | Derivado de throughput-performance. Aplica ajustes adicionales para maximizar el rendimiento de red. |
+| `network-latency`          | Derivado de latency-performance. Aplica ajustes adicionales para baja latencia de red. |
+| `desktop`                  | Derivado de balanced. Mejora la respuesta de aplicaciones interactivas.   |
+| `hpc-compute`              | Derivado de latency-performance. Ideal para computación de alto rendimiento. |
+| `virtual-guest`            | Optimiza el rendimiento en máquinas virtuales.                            |
+| `virtual-host`             | Optimiza el rendimiento como host de máquinas virtuales.                  |
+| `intel-sst`                | Optimizado para sistemas con Intel Speed Select. Úselo como superposición en otros perfiles. |
+| `optimize-serial-console`  | Mejora la respuesta de la consola serial. Úselo como superposición en otros perfiles. |
 
 
