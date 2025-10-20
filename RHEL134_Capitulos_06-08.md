@@ -140,4 +140,15 @@ Use el comando semanage boolean -l -C de nuevo. El booleano se muestra a pesar d
 
 Para este ejemplo de httpd_enable_homedirs, la configuración de arranque predeterminada original era off.
 
+#### Monitoreo de violaciones SELinux 
 
+Cuando SELinux rechaza una acción se ve reflejada en /var/log/audit/audit.log
+
+***sealert -a /var/log/audit/audit.log*** Para ver las alertas selinux que se han producido se usa el comando 
+
+ ***ausearch*** Para buscar eventos en el directorio /var/log/audit/audit.log
+
+ Una vez que vemos el problema en /var/log/audit/audit.log o en /var/log/messages buscar en message como resolverlo, lo suele decir
+
+
+Capitulo 8 página 213
