@@ -238,5 +238,62 @@ tcontext=system_u:object_r:reserved_port_t:s0 tclass=tcp_socket permissive=0
 
  Una vez que vemos el problema en /var/log/audit/audit.log o en /var/log/messages buscar en message como resolverlo, lo suele decir
 
+### Particiones de disco 
 
-Capitulo 8 página 213
+Dos tipos de particiones
+
+MBR - Máximo 4 particiones, la cuarta sera extendida que podra contener hasta 15 particiones.  El limite de disco y particion es de 2TiB
+
+GBR - Para sistemas con UEFI firmware. Máximo 128 particiones. Usa un identificador único para cada partición (GUID). Existen dos tablas de partición , una al principio y otra al final de respaldo.
+
+
+***parted***  Editor de particiones 
+
+***parted dispositivo*** 
+
+***parted dispositivo print*** No imprimira la tabla de particiones del dispositivo indicado.
+
+```console
+[root@host ~]# parted /dev/vda print
+Model: Virtio Block Device (virtblk)
+Disk /dev/vda: 53.7GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+...
+```
+
+Si no ponemos nada entraremos en un menu interactivo, si ponemos el dispositivo entraremos en el menu interactivo pero con el dispositivo seleccionado
+
+```console
+[root@host ~]# parted /dev/vda
+GNU Parted 3.4
+Using /dev/vda
+Welcome to GNU Parted! Type 'help' to view a list of commands.
+(parted) print
+Model: Virtio Block Device (virtblk)
+Disk /dev/vda: 53.7GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags:
+```
+
+***unit*** De forma predeterminada, el comando parted muestra los tamaños en potencias de 10 (KB, MB,GB). Puede cambiar el tamaño de la unidad con el parámetro unit, que acepta los siguientes valores:
+• s para sector
+• B para byte
+• MiB , GiB o TiB (potencias de 2)
+• MB , GB o TB (potencias de 10)
+
+Se puede poner en el prompt o en el menu interactivo
+
+```console
+[root@host ~]# parted /dev/vda unit s print
+```
+
+***mklabel*** Para particionar una nueva unidad, primero escriba una etiqueta de disco. La etiqueta del disco indica qué esquema de partición usar. Use parted para escribir una etiqueta de disco MBR o una etiqueta de disco GPT.
+
+```console
+[root@host ~]# parted /dev/vdb mklabel msdos
+[root@host ~]# parted /dev/vdb mklabel gpt
+```
+
+página 217 español
