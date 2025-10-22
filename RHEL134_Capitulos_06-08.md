@@ -350,7 +350,7 @@ Despues de crear una partición lo siguiente sera darle un sistema de ficheros, 
 
 ***mount*** Para montar una partición de forma temporal
 
-***mount /dispositivo /directorio**** Sin argumentos nos mostrara las particiones montadas
+***mount /dispositivo /directorio*** Sin argumentos nos mostrara las particiones montadas
 
 ```console
 [root@host ~]# mount /dev/vdb1 /mnt
