@@ -326,6 +326,9 @@ Un ejemplo
 
 ```console
 [root@host ~]# parted /dev/vdb mkpart userdata xfs 2048s 1000MB
+
+***En la primera partición habra que dejar 2048 sectores (2048s) de espacio que es lo que ocupa la tabla de partición.
+
 ```
 
 Luego siempre habra que ejecutar 
