@@ -19,6 +19,8 @@
 | `/etc/selinux/conifg`    | Directorio para configurar el modo de SELINUX = enforcing|permissive del sistema |
 | `/etc/selinux/targeted/contexts/files | Base de datos de etiquetado de archivos |
 | /var/log/audit/audit.log   | Problemas que con SELinux |
+| /etc/fstab | Para montar particiones de forma persistente , consta de seis campos <br> Dispositivo, directorio, sistema de ficheros, opciones, dump, fsck |
+
 
 
 
