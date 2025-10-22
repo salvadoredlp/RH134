@@ -397,3 +397,6 @@ Para montarla en /etc/fstab
 UUID swap swap defaults o pri=orden de prioridad 0 0 
 
 La prioridad predterminada es -2 . El kernel usa primero  el espacio de intercambio con una prioridad mas alta.
+
+
+Gestión de la pila de almacenamiento
