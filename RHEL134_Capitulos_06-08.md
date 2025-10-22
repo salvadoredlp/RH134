@@ -400,3 +400,6 @@ La prioridad predterminada es -2 . El kernel usa primero  el espacio de intercam
 
 
 Gestión de la pila de almacenamiento
+
+
+PÁGINA 245 
