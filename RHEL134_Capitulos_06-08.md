@@ -369,3 +369,28 @@ Dispositivo Directorio.de.montaje,Sistema.de.ficheros,opciones,dump,fsck (xfs no
 
 Se recomienda el uso de los UUID para hacer referecnia a los dispositivos al montarlos
 ***lsblk --fs*** Para listar los dispositivos disponibles junto con su UUID correspondiente
+
+
+### Espacion de intercambio
+| RAM                   | Espacio de intercambio | Espacio de intercambio si se permite la hibernación |
+|----------------------|------------------------|------------------------------------------------------|
+| 2 GB o menos         | Dos veces la memoria RAM | Tres veces la memoria RAM                          |
+| Entre 2 GB y 8 GB    | Igual que la memoria RAM | Dos veces la memoria RAM                           |
+| Entre 8 GB y 64 GB   | Al menos 4 GB            | 1,5 veces la memoria RAM                           |
+| Más de 64 GB         | Al menos 4 GB            | No se recomienda la hibernación                    |
+
+Se pone en el timpo de sistema de ficheros ***linux-swap***
+
+***mkswap partición*** Para formatear una partición SWAP
+
+***swapon -a*** activa todos los espacios de intercambio
+***swapon /dev/dispositivo*** Activar la particion de intercambio 
+**swapon --free*** 
+***free*** Inspecciona los espacios de intercambio disponibles
+***swapoff*** Para desactivar la partición de intercambio
+
+Para montarla en /etc/fstab
+
+UUID swap swap defaults o pri=orden de prioridad 0 0 
+
+La prioridad predterminada es -2 . El kernel usa primero  el espacio de intercambio con una prioridad mas alta.
