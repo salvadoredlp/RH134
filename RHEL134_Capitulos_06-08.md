@@ -242,9 +242,9 @@ tcontext=system_u:object_r:reserved_port_t:s0 tclass=tcp_socket permissive=0
 
 Dos tipos de particiones
 
-MBR - Máximo 4 particiones, la cuarta sera extendida que podra contener hasta 15 particiones.  El limite de disco y particion es de 2TiB
+***MBR*** - Máximo 4 particiones, la cuarta sera extendida que podra contener hasta 15 particiones.  El limite de disco y particion es de 2TiB
 
-GBR - Para sistemas con UEFI firmware. Máximo 128 particiones. Usa un identificador único para cada partición (GUID). Existen dos tablas de partición , una al principio y otra al final de respaldo.
+***GBR*** - Para sistemas con UEFI firmware. Máximo 128 particiones. Usa un identificador único para cada partición (GUID). Existen dos tablas de partición , una al principio y otra al final de respaldo.
 
 
 ***parted***  Editor de particiones 
@@ -296,4 +296,76 @@ Se puede poner en el prompt o en el menu interactivo
 [root@host ~]# parted /dev/vdb mklabel gpt
 ```
 
-página 217 español
+***mkpart*** Para crear la particion MBR
+
+Para ver los tipos de particion que podemos crear
+
+```console
+[root@host ~]# parted /dev/vdb help mkpart
+...output omitted...
+mkpart PART-TYPE [FS-TYPE] START END
+make a partition
+PART-TYPE is one of: primary, logical, extended
+FS-TYPE is one of: udf, btrfs, nilfs2, ext4, ext3, ext2, f2fs, fat32, fat16,
+hfsx, hfs+, hfs, jfs, swsusp, linux-swap(v1), linux-swap(v0), ntfs,reiserfs, hp-ufs, sun-ufs, xfs, apfs2, apfs1, asfs, amufs5, amufs4, amufs3, amufs2, amufs1, amufs0, amufs, affs7, affs6, affs5, affs4, affs3, affs2, affs1, affs0, linux-swap, linux-swap(new), linux-swap(old)
+'mkpart' makes a partition without creating a new file system on the
+partition. FS-TYPE may be specified to set an appropriate partition
+ID.
+```
+
+Cada vez que se crea una partición habra que ejecutar udevadm settle para que el sistema detecte la nueva partición.
+
+Un ejemplo para crear una partición sin necesidad del menu interactivo
+
+```console
+[root@host ~]# parted /dev/vdb mkpart primary xfs 2048s 1000MB
+```
+Para crear particiones GPT se sigue el mismo esquema pero no hay primaria ni extendida
+
+Un ejemplo
+
+```console
+[root@host ~]# parted /dev/vdb mkpart userdata xfs 2048s 1000MB
+```
+
+Luego siempre habra que ejecutar 
+
+```console
+[root@host ~]# udevadm settle
+```
+
+***rm*** en el menu interactivo y en consola sirve para borrar una partición
+
+```console
+[root@host ~]# parted /dev/vdb rm 1
+```
+
+Despues de crear una partición lo siguiente sera darle un sistema de ficheros, es decir formatearla 
+
+***mkfs.sistemadeficheros*** Para formatear una partición
+
+```console
+[root@host ~]# mkfs.xfs /dev/vdb1
+```
+
+***mount*** Para montar una partición de forma temporal
+
+***mount /dispositivo /directorio**** Sin argumentos nos mostrara las particiones montadas
+
+```console
+[root@host ~]# mount /dev/vdb1 /mnt
+
+[root@host ~]# mount | grep vdb1
+/dev/vdb1 on /mnt type xfs (rw,relatime,seclabel,attr2,inode64,noquota)
+``` 
+
+Para montar una partición de forma persistente se usa el fichero /etc/fstab. Consta de seis campos. 
+
+Dispositivo Directorio.de.montaje,Sistema.de.ficheros,opciones,dump,fsck (xfs no usa fsck)
+
+***findmnt --verify*** sirve para comprobar si la sintaxix de /etc/fstab es correcta. Tambien se puede montar de forma manual para comprobar que la linea es correcta
+
+***systemctl daemon-reload*** Se ejecutara siempre que se agregue una linea a fstab para que el sistema se de cuenta de los cambios
+
+Se recomienda el uso de los UUID para hacer referecnia a los dispositivos al montarlos
+***lsblk --fs*** Para listar los dispositivos disponibles junto con su UUID correspondiente
