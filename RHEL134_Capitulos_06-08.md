@@ -398,8 +398,165 @@ UUID swap swap defaults o pri=orden de prioridad 0 0
 
 La prioridad predterminada es -2 . El kernel usa primero  el espacio de intercambio con una prioridad mas alta.
 
+***parted /dev/vda help comando*** Para ayuda de los comandos de parted
 
-Gestión de la pila de almacenamiento
+### Gestión de la pila de almacenamiento
+
+## LVM
+
+***pv*** Volúmen físico , LVM puede dividir el dispositivo físico en volumenes mas pequeños que forman un bloque de almacenamiento (PV)
+***vg*** Grupo de volúmenes. Son conjuntos de almacenamiento formado por uno o mas PVs. Se trata del equivalente a un disco completo físico. Un PV solo puede ser asignado a un VG.
+***lv*** Volúmenes lógicos se crean desde extensiones físicas libres en un VG 
+
+Dispositivo Fisico ---> PV (Physical Volume) (Se crea un nuevo dispositivo) --> VG (Volume Group) Se pueden agrupar todos los PVs en un solo VG como si fuera un solo disco --> Creación de LVs (Logical Volume) /dev/project/data, /dev/project/utils,...
+
+***Para identificar particiones en el sistema se usan lsblk, blkid o cat /proc/partitions***
+
+1. Se crean las particiones si no existen el bit lvm tiene que estar en on
+
+  ```console 
+  [root@host ~]# parted /dev/vdb mklabel gpt mkpart primary 1MiB 769MiB
+  ...output omitted...
+  [root@host ~]# parted /dev/vdb mkpart primary 770MiB 1026MiB
+  [root@host ~]# parted /dev/vdb set 1 lvm on
+  [root@host ~]# parted /dev/vdb set 2 lvm on
+  [root@host ~]# udevadm settle
+  ```
+
+2. Se crean los PVs con ***pvcreate*** . Se pueden varios en una sola linea
+
+   ```console
+   [root@host ~]# pvcreate /dev/vdb1 /dev/vdb2
+   Physical volume "/dev/vdb1" successfully created.
+   Physical volume "/dev/vdb2" successfully created.
+   Creating devices file /etc/lvm/devices/system.devices
+   ```
+   
+3. Se crean los VGs con ***vgcreate***.
+
+   ```console
+   [root@host ~]# vgcreate vg01 /dev/vdb1 /dev/vdb2
+   Volume group "vg01" successfully created
+   ```
+   
+4. Se crean los LVs en los VGs
+
+   ```console
+   [root@host ~]# lvcreate -n lv01 -L 300M vg01
+   Logical volume "lv01" created.
+   ```
+5. Se formatea el LV creado con el sistema de ficheros que queramos ext4,xfs,...
+
+6. Se monta o con mount y si se quiere permanente en /etc/fstab
 
 
-PÁGINA 245 
+### Volumen lógico con desduplicación y compresión VDO
+
+1. Se necesita instalar ***vdo*** y ***kmod-vdo***
+
+  ```console
+  [root@host ~]# dnf install vdo kmod-kvdo
+  ``` 
+
+2. Crear los LVs con  el parametro ***--type vdo*** 
+
+```console
+  [root@host ~]# lvcreate --type vdo --name vdo-lv01 --size 5G vg01
+  Logical blocks defaulted to 523108 blocks.
+  The VDO volume can address 2 GB in 1 data slab.
+  It can grow to address at most 16 TB of physical storage in 8192 slabs.
+  If a larger maximum size might be needed, use bigger slabs.
+  Logical volume "vdo-lv01" created.
+```
+
+3. Se formatea y se monta igual que los demas LV
+
+   ```console
+   [root@host ~]# mkfs -t xfs /dev/vg01/vdo-lv01
+   [root@host ~]# mkdir /mnt/data
+   #  Se añade a /etc/fstab 
+   /dev/vg01/vdo-lv01 /mnt/data xfs defaults 0 0
+   [root@host ~]# mount /mnt/data/
+   ```
+
+Para ver los componentes de LVM estan los comandos ***pvdisplay, vgdisplay y lvdisplay***
+
+#### Ampliar un VG
+
+1. Se crea el pv igual que antes
+2. Se ejectua el comando ***vgextend*** para añadirlo
+   ```console
+   [root@host ~]# vgextend vg01 /dev/vdb3
+   Volume group "vg01" successfully extended
+   ```
+#### Ampliar un LV
+
+1. Usar el comando ***lextend*** con la opción ***-L +tamaño*** . Usar ***vgdisplay*** para ver si tiene suficiente espacio para ampliarlo
+
+```console
+  [root@host ~]# lvextend -L +500M /dev/vg01/lv01
+  Size of logical volume vg01/lv01 changed from 300.00 MiB (75 extents) to 800.00
+  MiB (200 extents).
+  Logical volume vg01/lv01 successfully resized.
+```
+
+***Se puede usar la opción -r de lvextend para hacer los dos pasos a la vez, extend y xfs_growfs***
+
+2. Usar ***xfs_growfs*** para ampliar el LV ampliado en caso de que sea xfs . Se debe montar antes de ampliarlo y el argumento sera el punto de montaje. XFS solo admite ampliación.
+   Usar ***resize2fs*** para ampliar el LV o reducirlo. El argumento en este caso es el LV
+
+   ```console
+   [root@host ~]# xfs_growfs /mnt/data/
+   ...output omitted...
+   data blocks changed from 76800 to 204800
+   ```
+
+   ```console
+   [root@host ~]# resize2fs /dev/vg01/lv01
+   resize2fs 1.46.5 (30-Dec-2021)
+   Resizing the filesystem on /dev/vg01/lv01 to 256000 (4k) blocks.
+   The filesystem on /dev/vg01/lv01 is now 256000 (4k) blocks long.
+   ```
+
+#### Ampliación de SWAP
+
+1. Se desconecta el espacio de intercambio
+   ```console
+   [root@host ~]# swapoff -v /dev/vg01/swap
+   swapoff /dev/vg01/swap
+   ```
+2. Se extiende el espacio con ***lvextend***
+   ```console
+   [root@host ~]# lvextend -L +300M /dev/vg01/swap
+   Size of logical volume vg01/swap changed from 500.00 MiB (125 extents) to 800.00
+   MiB (200 extents).
+   Logical volume vg01/swap successfully resized.
+   ```
+3. Se formatea el espacio de intercambio
+   ```console
+   [root@host ~]# mkswap /dev/vg01/swap
+   mkswap: /dev/vg01/swap: warning: wiping old swap signature.
+   Setting up swapspace version 1, size = 800 MiB (838856704 bytes)
+   no label, UUID=25b4d602-6180-4b1c-974e-7f40634ad660
+   ```
+4. Se activa el espacio de intercambio
+   ```console
+   [root@host ~]# swapon /dev/vg01/swap
+   ``` 
+
+***pvmove*** Sirve para hacer una copia de seguridad de los metadatos antes de hacer una reducción de un VG , hay que usar la opción -A
+```console
+[root@host ~]# pvmove -A y /dev/vdb3
+```
+***vgreduce*** Para eliminar un PV de un VG
+```console
+[root@host ~]# vgreduce vg01 /dev/vdb3
+Removed "/dev/vdb3" from volume group "vg01"
+```
+### Eliminar almacenamiento LVM 
+
+1. Desmontar con unmount
+2. Eliminar LV con ***lvremove***
+3. Eliminar VG con ***vgremove***
+4. Eliminar Pv con ***pvremove***
+
