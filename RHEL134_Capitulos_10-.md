@@ -148,3 +148,6 @@ El usuario root en este punto no puede cambiar /etc/fstab hasta que la unidad se
 Los administradores pueden usar estas shells para corregir problemas que impiden que el sistema arranque normalmente; por ejemplo, un bucle de dependencia entre servicios o una entrada incorrecta en /etc/fstab. Cuando se sale de estas shells, continúa el proceso de arranque regular.
 
 ***systemctl list-jobs***  Sirve para la identificación de trabajos atascados durante el inicio para ver si alguno ocasiona el problema.
+
+
+PÁGINA 332
