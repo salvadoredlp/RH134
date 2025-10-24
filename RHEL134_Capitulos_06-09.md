@@ -686,6 +686,24 @@ Created symlink /etc/systemd/system/multi-user.target.wants/autofs.service → /
 lib/systemd/system/autofs.service.
 ```
   
+| Característica                  | Montaje directo                                 | Montaje indirecto                               |
+|--------------------------------|--------------------------------------------------|--------------------------------------------------|
+| 📁 Archivo master              | `/- /etc/auto.direct`                           | `/mnt/nfs /etc/auto.nfs`                         |
+| 📄 Archivo de mapa             | Contiene rutas **absolutas**                    | Contiene **nombres de subdirectorios**           |
+| 📂 Punto de montaje final      | Definido explícitamente en el mapa (ej. `/netstorage`) | Se construye como `/mnt/nfs/<nombre>`     |
+| 🧭 Estructura del mapa         | `/ruta_absoluta opciones servidor:/ruta`       | `nombre opciones servidor:/ruta`                 |
+| 🧠 Interpretación              | Autofs monta exactamente donde tú defines       | Autofs monta dentro del directorio base          |
+| 🧱 Requiere crear punto de montaje | Sí, cada ruta definida debe existir previamente | Solo el directorio base debe existir             |
+| 🧰 Flexibilidad                | Menos flexible para múltiples recursos          | Más flexible para múltiples recursos agrupados   |
+| 📦 Ideal para                 | Montar recursos en rutas fijas del sistema      | Montar recursos dinámicamente bajo un contenedor |
+| 🧪 Ejemplo de mapa             | `/netstorage -fstype=nfs,rw 192.168.1.10:/data` | `data -fstype=nfs,rw 192.168.1.10:/data`         |
+| 📁 Resultado en el sistema     | `/netstorage`                                   | `/mnt/nfs/data`                                  |
+| 🔄 Montaje automático          | Sí, al acceder a la ruta                        | Sí, al acceder a la subruta                      |
+| 🧩 Integración con scripts     | Más predecible en rutas fijas                   | Requiere conocer el prefijo base (`/mnt/nfs/...`)|
+| 🧯 Desmontaje automático       | Sí, tras timeout si no se accede                | Sí, tras timeout si no se accede                 |
+| 🧾 Sintaxis en auto.master     | `/– /etc/auto.direct`                           | `/mnt/nfs /etc/auto.nfs --timeout=60`            |
+| 🧾 Sintaxis en mapa            | `/netstorage -fstype=nfs,rw servidor:/netstorage` | `netstorage -fstype=nfs,rw servidor:/netstorage`|
+
 
 
 
