@@ -560,3 +560,98 @@ Removed "/dev/vdb3" from volume group "vg01"
 3. Eliminar VG con ***vgremove***
 4. Eliminar Pv con ***pvremove***
 
+### Almacenimiento conectado a la red con NFS
+
+***nfs-utils*** Paquete que hay que instalar para poder montar unidades NFS (Network File System)
+
+```console
+[root@host ~]# dnf install nfs-utils
+```
+
+NFSv3 usa RPC y el puerto 111 se usa ***showmoun --exports server*** para ver los directorios que hay montados 
+
+```console
+[root@host ~]# showmount --exports server
+Export list for server
+/shares/test1
+/shares/test2
+```
+
+NFSv4 no usa RPC ***showmount --exports server*** no dara respuesta con NFSv4
+
+Para montar un directorio exportado por un servidor por NFS
+
+1. Creamos el directorio donde lo montaremos la unidad NFS . No se suele recomendar usar /mnt
+
+   ```console
+   [root@servera ~]# mkdir /public
+   ```
+   
+3. Montarlo con ***mount -t nfs server:/directorio /directoriolocal
+
+   ```console
+   [root@servera ~]# mount -t nfs serverb.lab.example.com:/shares/public /public
+   ```
+   
+4. Comprobar si esta montado
+
+   ```console
+   [root@servera ~]# mount | grep public
+   serverb.lab.example.com:/shares/public on /public type nfs4
+   (rw,relatime,vers=4.2,rsize=262144,wsize=262144,namlen=255,sync,proto=tcp,timeo=600,retrans=2,sec=sys,clientaddr=172.25.250.10,local_lock=none,addr=172.25.250.11)
+   ```
+   
+5. Para desmontarla usar ***unmount***
+
+   ```console
+   [root@servera ~]# umount /public
+   ```
+
+6. Montar de forma permanente en ***/etc/fstab***
+   
+   ```console
+   [root@servera ~]# vim /etc/fstab
+   # Agregue la línea siguiente al final del archivo:
+   serverb.lab.example.com:/shares/public /public nfs rw,sync 0 0
+   ```
+7. Actualizar systemctl daemon-reload
+
+   ```console
+   [root@servera ~]# systemctl daemon-reload
+   ```
+
+### Montaje automático de almacenamiento de red
+
+***autofs*** monta automáticamente los sistemas de archivos y las exportaciones a pedido.
+
+Para el automontaje hay que instalar los paquetes ***autofs*** y ***nfs-utils***
+
+```console
+[root@host ~]# dnf install autofs nfs-utils
+```
+
+Existe ***montaje directo*** y ***montaje indirecto***
+
+Consta de un archivo maestro ubicado en ***/etc/auto.master*** o en ***/etc/auto.master.d***
+
+El fichero tiene que tener extensión ***.autofs*** que tendra la forma 
+
+```console
+[root@host ~]# cat /etc/auto.master.d/demo.autofs
+mount-point map-file
+```
+*map-file* sera el fichero de asignación donde configuraremos las propiedades de los puntos de montaje
+
+***indirecto*** Cuando se usa *solo un directorio* para el punto de montaje.
+***directo***   Cuando se usa la *ruta completa* para el punto de montaje.
+
+El *map-file* tiene este formato
+
+```console
+[root@host ~]# cat /etc/auto.demo
+mount-point mount-options source-location
+```
+
+### Asignación indirecta
+
+
