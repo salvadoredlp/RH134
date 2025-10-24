@@ -651,7 +651,34 @@ El *map-file* tiene este formato
 [root@host ~]# cat /etc/auto.demo
 mount-point mount-options source-location
 ```
+***No olvidar instalar autofs y nfs-utils***
+
+### Asignación directa
+
+```console
+root@servera ~]# mount -t nfs  serverb.lab.example.com:/shares/direct/external /mnt
+[root@servera ~]# ls -l /mnt
+total 4
+-rw-r--r--. 1 root contractors 22 Apr 7 23:15 README.txt
+[root@servera ~]# umount /mnt
+```
+
+Crear fichero ***/etc/auto.master.d/direct.autofs***
+Editar y poner /- /etc/auto.direct // Es la ruta al fichero donde se montara la unidad
+Crear el fichero con la ruta que habremos puesto en /etc/auto.master.d/direct.autofs y montar el dispositivo
+
+Ruta donde lo montaremos   opciones de montaje   Ruta del almacenamiento en el server
+/external        -rw,sync,fstype=nfs server:/share/external
 
 ### Asignación indirecta
+
+Crear el fichero ***/etc/auto.master.d/indirect.autofs***
+Editar y poner la linea
+  /CarpetadeMontaje /etc/auto.indirect
+Crear fichero /etc/auto.indirect y poner la linea con las opciones de montaje
+Asterisco opciones de montaje  Ruta al server terminado en &
+* -rw,sync,fstype=nfs4 server:/share/indirect/&
+  
+
 
 
