@@ -677,7 +677,14 @@ Editar y poner la linea
   /CarpetadeMontaje /etc/auto.indirect
 Crear fichero /etc/auto.indirect y poner la linea con las opciones de montaje
 Asterisco opciones de montaje  Ruta al server terminado en &
-* -rw,sync,fstype=nfs4 server:/share/indirect/&
+\* -rw,sync,fstype=nfs4 server:/share/indirect/&
+
+***No olvidar habilitar autofs***
+```console
+[root@servera ~]# systemctl enable --now autofs
+Created symlink /etc/systemd/system/multi-user.target.wants/autofs.service → /usr/
+lib/systemd/system/autofs.service.
+```
   
 
 
