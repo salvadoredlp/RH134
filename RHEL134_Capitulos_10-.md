@@ -150,4 +150,10 @@ Los administradores pueden usar estas shells para corregir problemas que impiden
 ***systemctl list-jobs***  Sirve para la identificación de trabajos atascados durante el inicio para ver si alguno ocasiona el problema.
 
 
-PÁGINA 332
+### Reparación del sistema de archivos en el arranque
+
+Para reparar sistemas de archivos en el arranque tenemos el target de emergency . Si suele haber errores en el /etc/fstab es el target que saltara y montara el disco en solo lectura, para reparar algo en el fstab tendremos que volverlo a montar en escritura ya que si no no se escribiran los cambios que hagamos.
+
+***mount -o rw,remount /***
+
+
