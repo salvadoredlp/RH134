@@ -156,4 +156,68 @@ Para reparar sistemas de archivos en el arranque tenemos el target de emergency 
 
 ***mount -o rw,remount /***
 
+## Seguridad de redes
+
+Para la seguridad tendremos firewalld . Firewalld funciona por zonas predefinidas  que se pueden personalizar
+
+| **Nombre de la zona** | **Configuración predeterminada** |
+|-----------------------|----------------------------------|
+| `trusted`             | Permite todo el tráfico entrante. |
+| `home`                | Rechaza el tráfico entrante, a menos que esté relacionado con tráfico saliente o que relacione los servicios predefinidos `ssh`, `mdns`, `ipp-client`, `samba-client` o `dhcpv6-client`. |
+| `internal`            | Igual que la zona `home`: rechaza el tráfico entrante salvo tráfico saliente o servicios predefinidos `ssh`, `mdns`, `ipp-client`, `samba-client` o `dhcpv6-client`. |
+| `work`                | Rechaza el tráfico entrante, salvo tráfico saliente o servicios predefinidos `ssh`, `ipp-client` o `dhcpv6-client`. |
+| `public`              | Rechaza el tráfico entrante, salvo tráfico saliente o servicios predefinidos `ssh` o `dhcpv6-client`. Es la zona predeterminada para interfaces de red recién agregadas. |
+| `external`            | Rechaza el tráfico entrante salvo tráfico saliente o servicio `ssh`. El tráfico IPv4 saliente reenviado se enmascara como si se originara desde la dirección IPv4 de la interfaz saliente. |
+| `dmz`                 | Rechaza el tráfico entrante salvo tráfico saliente o servicio `ssh`. |
+| `block`               | Rechaza todo el tráfico entrante, salvo tráfico saliente. |
+| `drop`                | Deja caer todo el tráfico entrante, salvo tráfico saliente. No responde ni con errores ICMP. |
+
+Para conocer las zonas predefinidas se usa ***firewall-cmd --list-all-zones***
+
+### Servicios predefinidos
+
+Firewalld incluye servicios ya predefinidos para lugares comunies para simplificar las reglas de firewall. 
+Para ver los servicios prefefinidos ***firewall-cmd --get-services***
+
+| **Nombre del servicio** | **Configuración** |
+|-------------------------|-------------------|
+| `ssh`                  | Servidor SSH local. Tráfico a `22/tcp`. |
+| `dhcpv6-client`        | Cliente DHCPv6 local. Tráfico a `546/udp` en la red `fe80::/64` IPv6. |
+| `ipp-client`           | Impresión IPP local. Tráfico a `631/udp`. |
+| `samba-client`         | Archivo Windows local y cliente de intercambio de impresión. Tráfico a `137/udp` y `138/udp`. |
+| `mdns`                 | Resolución del nombre del enlace local DNS (mDNS) multidifusión. Tráfico a `5353/udp` a las direcciones de multidifusión `224.0.0.251` (IPv4) o `ff02::fb` (IPv6). |
+| `cockpit`              | Interfaz web de Red Hat Enterprise Linux para gestionar y monitorear su sistema local y remoto. Tráfico al puerto `9090`. |
+
+Para configurar el firewall 
+
+| **Comando `firewall-cmd`** | **Explicación** |
+|----------------------------|-----------------|
+| `--get-default-zone` | Consulta la zona predeterminada actual. |
+| `--set-default-zone=ZONE` | Establece la zona predeterminada. Cambia tanto la configuración en tiempo de ejecución como la permanente. |
+| `--get-zones` | Lista todas las zonas disponibles. |
+| `--get-active-zones` | Lista todas las zonas actualmente en uso (con una interfaz o fuente asociada), junto con su información. |
+| `--add-source=CIDR [--zone=ZONE]` | Redirige todo el tráfico desde la IP o red especificada a la zona indicada. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--remove-source=CIDR [--zone=ZONE]` | Elimina la regla que redirige tráfico desde la IP o red a la zona. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--add-interface=INTERFACE [--zone=ZONE]` | Redirige todo el tráfico desde la interfaz a la zona indicada. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--change-interface=INTERFACE [--zone=ZONE]` | Asocia la interfaz con otra zona. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--list-all [--zone=ZONE]` | Lista todas las interfaces, fuentes, servicios y puertos configurados para la zona. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--list-all-zones` | Recupera toda la información de todas las zonas (interfaces, fuentes, puertos y servicios). |
+| `--add-service=SERVICE [--zone=ZONE]` | Permite tráfico hacia el servicio indicado. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--add-port=PORT/PROTOCOL [--zone=ZONE]` | Permite tráfico hacia el puerto/protocolo indicado. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--remove-service=SERVICE [--zone=ZONE]` | Elimina el servicio de la lista permitida para la zona. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--remove-port=PORT/PROTOCOL [--zone=ZONE]` | Elimina el puerto/protocolo de la lista permitida para la zona. Si no se especifica `--zone=`, se usa la zona predeterminada. |
+| `--reload` | Descarta la configuración en tiempo de ejecución y aplica la configuración persistente. |
+
+Ejemplo 
+
+```console
+[root@host ~]# firewall-cmd --set-default-zone=dmz
+[root@host ~]# firewall-cmd --permanent --zone=internal \
+--add-source=192.168.0.0/24
+[root@host ~]# firewall-cmd --permanent --zone=internal --add-service=mysql
+[root@host ~]# firewall-cmd --reload
+```
+Siempre que abramos o cerremos un puerto o servicio incluiremos la zona a la que nos referimos y --permanent para que sea permanente. 
+Para que sea efectivo habra que recargar la configuración con ***firewall-cmd --reload***
+
 
