@@ -220,4 +220,51 @@ Ejemplo
 Siempre que abramos o cerremos un puerto o servicio incluiremos la zona a la que nos referimos y --permanent para que sea permanente. 
 Para que sea efectivo habra que recargar la configuración con ***firewall-cmd --reload***
 
+Para comprobar el servicio https instalado usar ***curl -k https://host*** la opción -k hace que curl no active el modo seguro de https que daria error sin certificados.
+
+### Etiquetado SELinux de Puertos
+
+***cat /etc/services*** Para listar los servicios disponibles y sus puertos
+***grep nombreservicio /etc/service*** Si queremos filtrar los servicios y buscar uno concreto
+
+***semanage port -l*** Para listar las etiquetas de puertos asignadas en ese momento
+***semanage port -l | grep ftp** Para filtrar una en concreto
+***semanage port -l | grep -w 80*** Para filtrar un puerto por su número, -w en grep busca una palabra determinada y no la cadena.
+
+***semanage port -a -t port_label -p tcp|upd NUM_PUERTO*** Para aplicar etiquetas existentes a un nuevo puerto.
+
+```console
+[root@host~]# semanage port -a -t gopher_port_t -p tcp 71
+[root@host~]# semanage port -a -t http_port_t  -p tcp 80
+```
+
+***semanage port -l -C*** Para comprobar los cambios realizados
+
+Para instalar las páginas del manual que incluye información especifica del servicio sobre tipos de SELinux y booleanos y puertos y luego buscarlo ***man -k _selinux***
+
+```console
+[root@host ~]# dnf -y install selinux-policy-doc
+[root@host ~]# man -k _selinux
+```
+
+***semanage port -d -t PORT_LABEL -p tcp|upd NUMERO_PUERTO*** Para eliminar una etiqueta de un puerto
+***semanage port -m -t PORT_LABEL -p tcp|udp NUMERO_PUERTO*** Para modificar una etiqueta de un puerto
+
+```console
+root@host ~]# semanage port -d -t gopher_port_t -p tcp 71
+
+[root@server ~]# semanage port -m -t http_port_t -p tcp 71
+
+[root@server ~]# semanage port -l -C
+SELinux Port Type Proto  Port Number
+http_port_t              tcp    71
+[root@server ~]# semanage port -l | grep http
+http_cache_port_t tcp 8080, 8118, 8123, 10001-10010
+http_cache_port_t udp 3130
+http_port_t tcp 71, 80, 81, 443, 488, 8008, 8009, 8443,9000 
+pegasus_http_port_t tcp 5988
+pegasus_https_port_t tcp 5989
+```
+
+
 
