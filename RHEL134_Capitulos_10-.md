@@ -266,5 +266,233 @@ pegasus_http_port_t tcp 5988
 pegasus_https_port_t tcp 5989
 ```
 
+## Instalación de Red Hat 
+
+***composer-cli*** Sirve para crear imagenes con Image builder. Tambien se puede hacer con la consola web.
+
+### Kickstart
+
+Las directivas comienzan con % y terminan con %end
+
+***%packages*** Indica que se debe incluir en la instalación.
+
+@ denota grupo de paquetes 
+@^ dentan grupos de entorno( grupos de grupos de paquetes)
+
+@module:stream/profile
+
+Para excluir un paquete se indica precedido de un guión (-)
+
+Un fichero kickstart incluye una o más secciones ***%pre*** y ***%post*** que contienen scripts que pueden ser en bash o python.
+Evitar la sección %pre ya que los errores ahí son dificiles de detectar.
+Puede haber tantas secciones pre y post como queramos.
+
+***Comandos de instalación*** 
+ 
+***url** Especifica la url donde apunta los medios de instalación
+
+`url --url="http://classroom.example.com/content/rhel9.0/x86_64/dvd/"`
+
+***repo*** Especifica donde encontrar paquetes adicionales para la instalación.
+
+`repo --name="appstream" --baseurl=http://classroom.example.com/content/rhel9.0/x86_64/dvd/AppStream/`
+
+***text*** Fuerza la instalación modo texto
+
+***vnc*** Habilita un vnc para la instalación gráfica de forma remota a traves de VNC
+
+`vnc --password=redhat`
+
+***clearpart*** Elimina particiones del sistema antes de la creación de particiones
+
+`clearpart --all --drives=vda,vdb`
+
+***part*** Especifica el tamaño , el formato y el nombre de una partición. Obligatorio a menos que esten los comandos autopart o mount
+
+`part /home --fstype=ext4 --label=homes --size=4096 --maxsize=8192 --grow`
+
+***autopart*** Crea las particiones básicas de forma automatica
+
+***ignoredisk*** Evite que Anaconda modifique los discos , es util junto con autopart
+
+`ignoredisk --drives=sdc`
+
+***bootloader:*** define dónde instalar el cargador de arranque. Obligatorio.
+
+`bootloader --location=mbr --boot-drive=sda`
+
+***volgroup, logvol*** crea grupos de volúmenes LVM y volúmenes lógicos.
+
+`
+part pv.01 --size=8192
+volgroup myvg pv.01
+logvol / --vgname=myvg --fstype=xfs --size=2048 --name=rootvol --grow
+logvol /var --vgname=myvg --fstype=xfs --size=4096 --name=varvol
+`
+
+***zerombr*** inicializa los discos cuyo formato no se reconoce.
 
 
+***network*** configura la información de la red para el sistema objetivo. Activa los dispositivos de red en el entorno del instalador.
+
+`network --device=eth0 --bootproto=dhcp `
+
+***firewall***  define la configuración del firewall para el sistema objetivo.
+
+`firewall --enabled --service=ssh,http`
+
+Comandos de ubicación y seguridad
+
+Los siguientes comandos de Kickstart configuran los ajustes de seguridad, idioma y región:
+
+• lang: establece el idioma que se utilizará en el sistema instalado. Obligatorio.
+`lang en_US`
+• keyboard: establece el tipo de teclado del sistema. Obligatorio.
+`keyboard --vckeymap=us`
+• timezone: define la zona horaria y si el reloj del hardware usa UTC. Obligatorio.
+`timezone --utc Europe/Amsterdam`
+• timesource: habilita o deshabilita NTP. Si habilita NTP, debe especificar servidores o
+conjuntos de NTP.
+` timesource --ntp-server classroom.example.com`
+• authselect: establece opciones de autenticación. Las opciones que reconoce el comando authselect son válidas para este comando. Consulte authselect (8).
+• rootpw: define la contraseña inicial del usuario root. Obligatorio.
+`rootpw --plaintext redhat
+o
+rootpw --iscrypted $6$KUnFfrTzO8jv.PiH$YlBbOtXBkWzoMuRfb0.SpbQ....XDR1UuchoMG1`
+• selinux: establece el modo de SELinux para el sistema instalado.
+`selinux --enforcing`
+• services: modifica el conjunto de servicios predeterminado que se ejecutan en el objetivo systemd predeterminado.
+`services --disabled=network,iptables,ip6tables --enabled=NetworkManager,firewalld`
+• group, user: crea un grupo o usuario locales en el sistema.
+`group --name=admins --gid=10001
+ user --name=jdoe --gecos="John Doe" --groups=admins`
+
+Comandos varios
+
+Los siguientes comandos de Kickstart configuran el registro del estado de energía del host al
+finalizar:
+• logging: este comando define cómo Anaconda realiza el registro durante la instalación.
+`logging --host=loghost.example.com`
+• firstboot: si está habilitado, el Agente de configuración se inicia la primera vez que el sistema arranca. Este comando requiere el paquete initial-setup.
+`firstboot --disabled`
+• reboot, poweroff, halt: especifican la medida final cuando finalice la instalación. El valor predeterminado es la opción halt.
+
+Ejemplo de un archivo Kickstart
+
+En el siguiente ejemplo, la primera parte del archivo Kickstart consta de los comandos de
+instalación, como la partición del disco y la fuente de instalación.
+
+```
+#version=RHEL9
+# Define system bootloader options
+bootloader --append="console=ttyS0 console=ttyS0,115200n8 no_timer_check
+net.ifnames=0 crashkernel=auto" --location=mbr --timeout=1 --boot-drive=vda
+# Clear and partition disks
+clearpart --all --initlabel
+ignoredisk --only-use=vda
+zerombr
+part / --fstype="xfs" --ondisk=vda --size=10000
+# Define installation options
+text
+repo --name="appstream" --baseurl="http://classroom.example.com/content/rhel9.0/
+x86_64/dvd/AppStream/"
+url --url="http://classroom.example.com/content/rhel9.0/x86_64/dvd/"
+# Configure keyboard and language settings
+keyboard --vckeymap=us
+lang en_US
+# Set a root password, authselect profile, and selinux policy
+rootpw --plaintext redhat
+authselect select sssd
+selinux --enforcing
+firstboot --disable
+# Enable and disable system services
+services --disabled="kdump,rhsmcertd" --enabled="sshd,rngd,chronyd"
+# Configure the system timezone and NTP server
+timezone America/New_York --utc
+timesource --ntp-server classroom.example.com
+%packages
+@core
+chrony
+cloud-init
+dracut-config-generic
+dracut-norescue
+firewalld
+grub2
+kernel
+rsync
+tar
+-plymouth
+%end
+%post
+echo "This system was deployed using Kickstart on $(date)" > /etc/motd
+%end
+También puede especificar un script de Python con la opción --interpreter.
+%post --interpreter="/usr/libexec/platform-python"
+print("This line of text is printed with python")
+%end
+```
+
+Se pueden hacer con el editor de texto o con el sitio web https://access.redhat.com/labs/kickstartconfig
+
+En ***/root/anaconda-ks.cfg*** existe el fichero que se uso en la instalación del sistema, se puede modificar 
+
+***ksvalidator*** sirve para validar el fichero kickstart y ver que no tiene errores
+
+```[user@host ~]$ ksvalidator /tmp/anaconda-ks.cfg```
+
+***ksverdiff*** Para ver diferencia de sintaxis entre diferentes versiones.
+
+```
+[user@host ~]$ ksverdiff -f RHEL8 -t RHEL9
+The following commands were removed in RHEL9:
+device deviceprobe dmraid install multipath
+The following commands were deprecated in RHEL9:
+autostep btrfs method
+The following commands were added in RHEL9:
+timesource
+...output omitted...
+```
+
+Para instalarlo ***dnf install pykickstart***
+
+Una vez elegido un método de Kickstart, se le indica al instalador dónde ubicar el archivo Kickstart
+al pasar el parámetro inst.ks=LOCATION al kernel de instalación.
+
+Ejemplos 
+
+• inst.ks=http://server/dir/file
+• inst.ks=ftp://server/dir/file
+• inst.ks=nfs:server:/dir/file
+• inst.ks=hd:device:/dir/file
+• inst.ks=cdrom:device
+
+
+### Verificación de los requisitos del sistema
+
+***dnf group install "Virtualization Host"*** Para instalar el paquete de virtualización
+
+Para comprabar los requisitos del sistema 
+
+```
+[root@host ~]# virt-host-validate
+QEMU: Checking for hardware virtualization  :PASS
+QEMU: Checking if device /dev/kvm exists     :PASS
+....
+```
+#### Instalar una maquina Virtual
+
+***virt-install*** 
+
+```console
+[root@host ~]# virt-install --name demo --memory 4096 --vcpus 2 --disk size=40 \
+--os-type linux --cdrom /root/rhel.iso
+...output omitted...
+```
+
+Instalar el paqute para crear maquinas virtuales desde el cockpit
+
+```console
+[root@host ~]# dnf install cockpit-machines
+[root@host ~]# systemctl enable --now cockpit.socket
+
+```
