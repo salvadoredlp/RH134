@@ -238,3 +238,7 @@ Para crear el servicio
 
 [user@host ~]$ loginctl enable-linger
 ```
+
+***podman inspect nombredelcontenedor*** Se pone por un grep -A 10 Status para buscar si esta en marcha o hay error.
+
+***~/.config/systemd/student*** 
