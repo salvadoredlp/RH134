@@ -123,4 +123,118 @@ Getting image source signatures
 ...output omitted...
 ``` 
  
+Las herramientas como skopeo estan en el paquete ***container-tools***
 
+```console
+[student@servera ~]$ sudo dnf install container-tools
+[sudo] password for student: student
+...output omitted...
+Is this ok [y/N]: y
+...output omitted...
+Complete!
+```
+
+Se pueden usar formato de plantillas GO para sacar la información de inspect a parte de en formato jSON
+
+Para buscar campos se puede sacar en formato json y luego pasarlo por grep -A nºlineas que quiro mostrar despues de la busqueda.
+
+``` 
+[user@host ~]$ podman inspect 7763097d11ab | grep -A 4 State
+"State": {
+"OciVersion": "1.0.2-dev",
+"Status": "running",
+"Running": true,
+
+[user@host ~]$ podman inspect \
+--format='{{.State.Status}}' redhat
+running
+```
+
+***podman stop nombre o UUID del contenedor*** Para el contenedor. Cuando se para podman envia SIGTERM al contenedor.
+
+***podman stop --all*** Parar todos los contenedores en marcha . Si no paran con SIGTERM podman les enviara SIGKILL, puedes cambiar el tiempo que espera
+para enviar SIGKILL con la opción ***-time*** 
+
+```console [user@host ~]$ podman stop --time=100 ```
+
+***podman kill*** Enviar SIGKILL a un contenedor para que acabe si o si.
+***podman pause*** Pausarlo
+***podman unpause*** Reanudar un contenedor en pausa
+***podman restart nginx*** Reiniciar un contenedor
+***podman rm*** Borrar un contenedor, no puede estar en ejecución, hay que pararlo antes.
+***podman rm iddelcontenedor --force*** Se puede forzar borrarlo con la opción --force
+***podman rm --all*** Borrar todos los contenedores
+
+#### Almacenamiento persistente
+
+***podman unshare*** sirve para entrar en un entorno especial donde puedes hacer cosas como si fueras "root", pero sin tener permisos reales de administrador. Es útil para montar contenedores o limpiar datos cuando eres un usuario normal.Este comando te mete en un espacio de nombres de usuario donde tu UID (por ejemplo 1000) se convierte en UID 0 (root virtual). Así puedes ejecutar comandos que normalmente requieren permisos elevados, pero sin afectar el sistema real.
+
+***podman exec -it*** Ejecuta un comando dentro del contenedor, la opción -it nos da la posibilidad d etener une sesion bash interactiva dentro del contenedor
+
+```console
+[user@host ~]$ podman exec -it db01 grep mysql /etc/passwd
+mysql:x:27:27:MySQL Server:/var/lib/mysql:/sbin/nologin
+```
+
+Por ejemplo , para montar el directorio /home/user/db_data en el contenedor db01 para proporcionar
+almacenamiento persistente en el directorio /var/lib/mysql del contenedor. A continuación,
+cree el directorio /home/user/db_data y use el comando podman unshare para establecer el
+UID y el GID del espacio de nombres de usuario de 27 como propietario del directorio.
+El UID y el GID de 27 en el contenedor se asignan al UID y al GID de 100026 en la máquina host.
+Puede verificar la asignación al ver la propiedad del directorio /home/user/db_data con el
+comando ls.
+
+```console
+[user@host ~]$ mkdir /home/user/db_data
+[user@host ~]$ podman unshare chown 27:27 /home/user/db_data
+
+[user@host ~]$ ls -l /home/user/
+total 0
+drwxrwxr-x. 3 100026 100026 18 May
+...output omitted...
+```
+
+Ahora es cuando se podría usar la opción -v para montar almacenamiento persistente en un contenedo
+```
+[user@host ~]$ podman run -d --name db01 \
+-e MYSQL_USER=student \
+-e MYSQL_PASSWORD=student \
+-e MYSQL_DATABASE=dev_data \
+-e MYSQL_ROOT_PASSWORD=redhat \
+-v /home/user/db_data:/var/lib/mysql \
+registry.lab.example.com/rhel8/mariadb-105
+```
+
+***podman container logs nombrecontenedor*** Para ver los errores en el log del contenedor
+
+Para que los directorios se puedan montar como almacenamiento persistente tienen que tener la etiquta selinux ***container_file_t***
+Tambien se puede poner al final de  la linea de montaje la letra :Z para que establezca el formato SELinux necesario
+
+```console
+[user@host ~]$ podman run -d --name db01 \
+-e MYSQL_USER=student \
+-e MYSQL_PASSWORD=student \
+-e MYSQL_DATABASE=dev_data \
+-e MYSQL_ROOT_PASSWORD=redhat \
+-v /home/user/db_data:/var/lib/mysql:Z \
+registry.lab.example.com/rhel8/mariadb-105
+```
+
+#### Generar un archivo de unidad de Systemd
+
+***podman generate systemd --name*** Para generar un fichero que nos permita crear un servicio basasdo en el contenedor ejecutado  
+El fichero creado se agregrara a ~/.config/systemd/user
+
+Luego actulizaremos los ficheros con ***systemctl --user daemon-reload***
+
+Para crear el servicio 
+
+```console
+[user@host ~]$ systemctl --user [start, stop, status, enable, disable] container-web.service
+
+# Cuando usa la opción --user, de manera predeterminada, systemd inicia el servicio cuando inicia
+# sesión y lo detiene cuando cierra sesión. Puede iniciar sus servicios habilitados en el arranque del
+# sistema operativo y detenerlos en el cierre, ejecutando el comando loginctl enable-linger.
+
+[user@host ~]$ loginctl enable-linger
+```
