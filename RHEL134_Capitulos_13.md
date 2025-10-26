@@ -242,3 +242,11 @@ Para crear el servicio
 ***podman inspect nombredelcontenedor*** Se pone por un grep -A 10 Status para buscar si esta en marcha o hay error.
 
 ***~/.config/systemd/student*** 
+
+Para ver si loginctl esta activado 
+
+```console
+[podsvc@serverb user]$ loginctl show-user podsvc
+...output omitted...
+Linger=yes
+```
