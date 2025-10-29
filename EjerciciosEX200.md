@@ -370,18 +370,79 @@
     
 </details>
 
-27.<details>
-   <summary> El directorio "/test" debe ser creado en el boot del sistema serverX con permisos totales y el sticky bit activo.
-El owner de dicho directorio debe ser "root" y el grupo "root". Cualquier fichero dentro de "/test" que no haya sido ni accedido ni modificado ni cambiado en más de 20 días, debe ser borrado</summary>.
-   <br>
-   ```console 
+27. <details>
+    <summary> El directorio "/test" debe ser creado en el boot del sistema serverX con permisos totales y el sticky bit activo. El owner de dicho directorio debe ser "root" y el grupo "root". Cualquier fichero dentro de "/test" que no haya sido ni accedido ni modificado ni cambiado en más de 20 días, debe ser borrado. </summary>
+    <br>
+   
+    ```console 
     vim /etc/tmpfiles.d/test.conf
-   Type Path Mode UID  GID  Age Argument
+    Type Path Mode UID  GID  Age Argument
       d /test 1777  root root 20d -
+    ```
 
     Para ver que funciona, rebotar el sistema
   
-    NOTA: El man de tmpfiles.d explica los detalles de la configuración y contiene ejemplos.
+    ***El man de tmpfiles.d explica los detalles de la configuración y contiene ejemplos.***
+	`man tmpfiles.d`
+   
+  </details>
 
-	man tmpfiles.d
-   ```  </details>
+28. <details>
+	<summary> Crea un servidor apache contenerizado con el nombre miweb y con el tag mas bajo de versión de las imagenes de rhel8/httpd-24. Usar registry.redhat.io como registry
+	Crea y monta ~/storage/ como almacenamiento persistente en el contenedor. Y un index.html con el mensaje "Vamos a morir todos. Welcome to the container server" 
+	Los puertos mapeados sera el 8080 y tendras que declarar las variables HTTPD_USER Y HTTPD_PASSWORD con admin como valor
+	Conviertelo en servicio usando systemd y hazlo persistente a los reinicios </summary>
+	<br>
+          
+    ```console
+    # dnf install container-tools
+
+	$ podman login registry.redhat.io
+
+	$ skopeo inspect docker://registry.redhat.io/rhel8/httpd-24 | grep -A10 Tags
+	#Tambien se puede ejecutar 
+    $ skopeo list-tags docker://registry.redhat.io/rhel8/httpd-24/ | head o tail o less // Por si son demasiadas versiones
+	#Creamos el almacenamieto persistente
+    $ mkdir ~/storage
+    #Creamos el index.html
+    $ touch ~/storage/index.html; echo "Vamos a morir todos. Welcome to the container server" > ~/storage/index.html
+    # Descargamos la imagen de contenedor que queremos levantar
+    $ podman run -d -v ~/storage:/var/www/html:Z -p 8080:8080 --name miweb -e HTTPD_USER=admin -e \
+        HTTPD_PASSWORD=admin registry.redhat.io/rhel8/httpd-24:1-104
+    #Abrimos los puertos del firewall
+    # firewall-cmd --add-port=8080/tcp --permanent
+    # firewall-cmd --reload
+    #Crear directorio de usuario para guardar el servicio
+    $ mkdir ~/.config/systemd/user
+    $ podman generate systemd  --name miweb --new --files
+    #Copiar fichero creado a ~/.config/systemd/user
+    $ cp .config/container-miweb.service ~/.config/systemd/user
+	#Activar que los servicios se caarguen aunque el usuario no se loguee
+    $ loginctl enable-linger
+    #Comprobar
+    $ loginctl show-user nombredeusuario
+    #Cargar servicio
+    $ systemct	--user daemon-reload
+    $ systemctl --user enable container-miweb.service
+    #Reiniciar el sistema y comprobar
+    $ curl http:/192.168.200.203:8080
+    ```
+    
+ 
+
+podman pull registry.redhat.io/rhel8/httpd-24:1-112
+
+podman images
+
+mkdir -p ~/storage/html/
+
+cd ~/storage/html
+
+vim index.html
+           <h1>My Container Apache HTTP Web Server</h1>
+           
+podman run -d --name mysite -p 8080:8080 -v /home/mshekhawat/storage:/var/www:Z -e HTTPD_USER=admin -e HTTPD_PASSWORD=admin registry.redhat.io/rhel8/httpd-24:1-112
+
+podman ps
+
+  
