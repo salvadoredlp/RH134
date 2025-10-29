@@ -471,8 +471,5 @@
     # reboot
     # podman ps
     # systemctl status container-mariadb.service
-  ```
-
-     
-
-  
+  	```
+  </details>
