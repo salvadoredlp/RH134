@@ -402,6 +402,10 @@
 	$ skopeo inspect docker://registry.redhat.io/rhel8/httpd-24 | grep -A10 Tags
 	#Tambien se puede ejecutar 
     $ skopeo list-tags docker://registry.redhat.io/rhel8/httpd-24/ | head o tail o less // Por si son demasiadas versiones
+    // Descargamos la imagen de la versión mas baja que vemos 
+	$ podman pull registry.redhat.io/rhel8/httpd-24:1-104
+    // comprobamos
+    $ podman images
 	#Creamos el almacenamieto persistente
     $ mkdir ~/storage
     #Creamos el index.html
@@ -427,22 +431,48 @@
     #Reiniciar el sistema y comprobar
     $ curl http:/192.168.200.203:8080
     ```
-    
- 
+29. <details> 
+	<summary>Ejecuta un root container para MariaDb , se tiene que llamar mariadb, debe ser accesible por el puerto 3206, el DB USER sera muser y su password mpassword, el nombre de l abase de datos sera mydb , el directorio /opt/mariadb en el host sera el almacenamiento persistente de mariadb en el contenedor en /var/lib/mariadb.  Se tiene que configurar para que se inicie en cada reinicio del sistema </summary>
 
-podman pull registry.redhat.io/rhel8/httpd-24:1-112
+ 	```console
+    $ sudo -i
+    # podman login registry.redhat.io
+    # podman search mariad
+    # skopeo list-tags docker://registry.redhat.io/rhel8/mariadb-1011
+    // Descargamos la imagen
+    # podman pull registry.redhat.io/rhel8/mariadb-1011
+    // Comprobar
+    # podman images
+    // Vemos sus variables de entorno
+    // Con skopeo no hace falta hacer pull para inspeccionarla
+    # skopeo inspect docker://registry.redhat.io/rhel8/mariadb-1011 --format '{{ .Env }}'
+        o
+    # podman inspect  mariadb  --format '{{ .Config.Env }}'
+   
+    #podman run -d --name mariadb -p 3206:3206 -e MYSQL_USER=muser -e MYSQL_PASSWORD=mpassword -e MYSQL_DATABASE=mydb       -e MYSQL_ROOT_PASSWORD=password -v /opt/mariadb:/var/lib/mariabd:Z mariadb-1011:latest
+    // Comprobamos
+    # podman ps
+    # podman logs mariadb
+    # loginctl show-user root
+    # loginctl enable-linger root
+    // Comprobamos
+    # loginctl show-user root
 
-podman images
+	// Directorio donde van los servicios de root, por eso nos colocamos ahí
+    # cd /etc/systemd/system/
 
-mkdir -p ~/storage/html/
+    // Generamos el fichero para crear el servicio a partir del contenedor
+    # podman generate systemd --name mariadb --files
+    // recargamos
+    # systemctl daemon-reload
+    // Activamos servicio
+    # systemctl enable container-mariab.service
+    // Reiniciamos sistema para comprobar si lo ejecuta
+    # reboot
+    # podman ps
+    # systemctl status container-mariadb.service
+  ```
 
-cd ~/storage/html
-
-vim index.html
-           <h1>My Container Apache HTTP Web Server</h1>
-           
-podman run -d --name mysite -p 8080:8080 -v /home/mshekhawat/storage:/var/www:Z -e HTTPD_USER=admin -e HTTPD_PASSWORD=admin registry.redhat.io/rhel8/httpd-24:1-112
-
-podman ps
+     
 
   
