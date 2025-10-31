@@ -473,3 +473,60 @@
     # systemctl status container-mariadb.service
   	```
   </details>
+
+30. <details>
+	<summary>En "serverb", ejecutar un contenedor rootless llamado "wordled" que contendrá una aplicación Javascript básica. Su almacenamiento persistente estará en /home/student/wordled donde se pondrán los ficheros contenidos en el tar "wordled.tar". Dicho contenedor se ejecutará como servicio con el nombre "wordled" en el arranque de serverb y enlazará a su puerto 8080 permitiendo su uso desde workstation.
+	- Usar la imagen registry.access.redhat.com/rhscl/httpd-24-rhel7
+	- DocumentRoot de Apache en /var/www/html
+	- Los ficheros contenidos en el fichero wordled.tar también se pueden obtener de:<br> https://github.com/MMGInstructor/wordled</summary><br>
+
+    ```console
+       $ ssh student@serverb
+       $ sudo -i 	
+	   # sudo dnf install podman container-tools -y
+       # exit // volvemos a usuario normal
+       $ podman login registry.redhat.com // Nos logueamos en el registry para poder bajar imagenes
+	   $ podman pull registry.access.redhat.com/rhscl/httpd-24-rhel7 
+	   $ podman images // vemos si se descargo y la tenemos en el registro local
+	   $ podman inspect registry.access.redhat.com/rhscl/httpd-24-rhel7 | grep -A5 'Config' -> veo usuario 1001 y puertos 8080 y 8443
+
+       // Crear el almacenamiento del contenedor y lo preparo para que lo pueda usar:
+
+	   $ mkdir  ~/wordled 
+	   $ cp wordled.tar ; cd ~/wordled
+	   $ tar xvf wordled.tar; rm wordled.tar
+       // Ponemos como propiertario del directorio al usuario del contenedor. Importante hacerlo desde el namespace del contenedor con podman unshare
+	   $ podman unshare chown -R 1001:1001 /home/student/wordled
+
+	   $ podman run -d --name wordled -v /home/student/wordled:/var/www/html:Z -p 8080:8080 registry.access.redhat.com/rhscl/httpd-24-rhel7 
+	   $ podman logs wordled  // Comprobamos que no hay errores
+	
+	   $ curl -k http://localhost:8080    
+
+       // Crear el directorio donde guardar los servicios de usuario si no existe
+
+	   $ mkdir -p ~/.config/systemd/user/
+	   $ cd ~/.config/systemd/user
+       // Generamos el fichero de configuración del servicio
+	   $ podman generate systemd --new --files --name wordled
+	   $ podman stop wordled && podman rm wordled
+	   $ systemctl --user daemon-reload
+	   $ systemctl --user enable --now container-wordled
+	   $ loginctl enable-linger
+	   $ loginctl show-user student	// Buscar linger=yes
+	   $ sudo reboot
+
+       // Abrir puerto 8080 en el firewall de serverb:
+
+	   $ ssh student@serverb
+	   $ systemctl --user status container-wordled			
+	   $ podman ps							
+	   $ sudo firewall-cmd --add-port=8080/tcp --permanent
+	   $ sudo firewall-cmd --reload
+
+       // Comprobar
+       $  curl http://serverb.lab.example.com:8080 
+  	```
+</details>
+
+FIN
