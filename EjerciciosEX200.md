@@ -660,6 +660,6 @@
 	    ├── costa.pdf
 	    └── islas.pdf
 	
-	NOTA: Si hago un tree /servera-ofertas no veo los subdirectorios, tengo que acceder explícitamente a ellos 		primero y luego ya se verán. Al rato ¡¡¡desaparecen!!!
+	NOTA: Si hago un tree /servera-ofertas no veo los subdirectorios, tengo que acceder explícitamente a ellos 		primero cd /servera-ofertas/viajes y luego ya se verán. Al rato desaparecen
 	```
 	</details>
