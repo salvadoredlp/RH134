@@ -529,4 +529,33 @@
   	```
 </details>
 
-FIN
+31. <details> 
+	<summary> Levantar Wordpress en un pod (conjunto de contenedores) </summary>
+	<br>
+	
+	```console
+	$ podman login -u <usuario> -p <password> registry.redhat.io
+
+	$ podman pull registry.redhat.io/rhscl/mysql-57-rhel7:latest
+
+	$ podman pull docker.io/wordpress
+	
+	$ podman pull k8s.gcr.io/pause:3.1
+
+	$ podman pod create -n wordpresspod -p 8080:80
+
+	$ podman pod list
+
+	$ podman ps -ap
+
+	$ podman run --name persistent-db -d -e MYSQL_USER=user1 -e MYSQL_PASSWORD=mypa55 -e MYSQL_DATABASE=items -e MYSQL_ROOT_PASSWORD=r00tpa55 --pod wordpresspod rhscl/mysql-57-rhel7
+
+	$ podman run --name my-wordpress -e WORDPRESS_DB_HOST=127.0.0.1 -e WORDPRESS_DB_USER=user1 -e WORDPRESS_DB_PASSWORD=mypa55 -e WORDPRESS_DB_NAME=items -d --pod wordpresspod docker.io/wordpress
+
+	$ podman ps -ap
+
+    $ curl http://localhost:8080 o desde un navegador configurar wordpress
+    ```
+    </details>
+
+
