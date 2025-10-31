@@ -530,7 +530,7 @@
 </details>
 
 31. <details> 
-	<summary> Levantar Wordpress en un pod (conjunto de contenedores) </summary>
+	<summary> Crear un pod, conjunto de contenedores, que permita instalar  Wordpress, para eso es necesario levantar     los contenedores pause,mysql y wordpress. </summary>
 	<br>
 	
 	```console
