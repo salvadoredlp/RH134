@@ -663,3 +663,24 @@
 	NOTA: Si hago un tree /servera-ofertas no veo los subdirectorios, tengo que acceder explícitamente a ellos 		primero cd /servera-ofertas/viajes y luego ya se verán. Al rato desaparecen
 	```
 	</details>
+
+32. <details>
+	<summary> Usar automount como systemd </summary>
+	<br>
+	
+	```console
+	Para que se automonten unidades con systemd (no es necesario el autofs) se modifica el fichero /etc/fstab con la      línea:
+
+    <server>:<recurso>  <punto_montaje>  nfs noauto,x-systemd.automount  0   0 
+
+    Reboot del sistema o systemctl daemon-reload y systemctl restart remote-fs.target 
+
+    Después basta acceder para que se automonte.
+
+    Documentación sobre opciones
+ 
+    man systemd.mount
+
+    La opción noauto hara que tengamos que acceder al punto de montaje para que se monte , no se montara al inicio
+    ```
+    </details>
