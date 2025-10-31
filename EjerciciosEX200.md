@@ -559,3 +559,107 @@
     </details>
 
 
+32. <details>
+	<summary>En servera tengo unos recursos NFS exportados y quiero montarlos con automonter en workstation.</summary>
+	<br>
+	
+	```console
+	- Creo contenido en recursos exportados:
+
+	mkdir -p /ofertas/{viajes,productos,servicios}
+	mkdir /info
+	
+	touch /ofertas/viajes/{caribe,islas,costa}.pdf
+	touch /ofertas/servicios/{hbo,netflix,limpieza}.pdf
+	touch /ofertas/productos/{thermomix,rumba,bq_m5}.pdf
+	echo "Enhorabuena, puedes ver el contenido del fichero" > /info/mensaje.txt
+	
+	- Añado los recursos a exportar
+	
+	echo "/ofertas/viajes  172.25.0.0/16(rw,sync)" >> /etc/exports
+	echo "/ofertas/productos  172.25.0.0/16(rw,sync)" >> /etc/exports
+	echo "/ofertas/servicios  172.25.0.0/16(rw,sync)" >> /etc/exports
+	echo "/info  172.25.0.0/16(rw,sync)" >> /etc/exports
+	
+	- Arranco el servicio nfs-server y veo que exporta los recursos:
+	
+	systemctl start nfs-server
+	exportfs -s  -> deben salir las 4 líneas
+	
+	- Abro firewall para el NFS:
+	
+	firewall-cmd --permament --add-service=nfs 
+	firewall-cmd --reload
+	
+	
+	En workstation, hago:
+	
+	  dnf install -y tree 
+	
+	1) Veo los recursos que exporta por NFS servera:
+	
+	   mount -t nfs servera:/ /mnt; tree /mnt
+	
+	  veo:
+	 
+	/mnt
+	├── info
+	│   └── mensaje.txt
+	└── ofertas
+	    ├── productos
+	    │   ├── bq_m5.pdf
+	    │   ├── rumba.pdf
+	    │   └── thermomix.pdf
+	    ├── servicios
+	    │   ├── hbo.pdf
+	    │   ├── limpieza.pdf
+	    │   └── netflix.pdf
+	    └── viajes
+	        ├── caribe.pdf
+	        ├── costa.pdf
+	        └── islas.pdf
+	
+	  Decido montar con montaje directo /info en /servera-info y con montaje indirecto /ofertas en /servera-ofertas.
+	
+	 umount /mnt
+	
+	2) Instalo paquete autofs
+	   dnf install -y autofs
+	
+	3) Creo puntos de montaje:
+	   mkdir /servera-{info,ofertas}
+	
+	4) Creo montaje directo:
+	
+	   echo "/- /etc/auto.info" >> /etc/auto.master.d/info.autofs   
+	
+	   echo "/servera-info -rw,sync servera:/info" >> /etc/auto.info
+	
+	5) Arranco servicio:
+	  
+	   systemctl enable --now autofs
+	
+	6) Accedo al directorio: ls /servera  -info -> mensaje.txt y puedo ver contenido
+	
+	7) Creo montaje indirecto:
+	
+	   echo "/servera-ofertas /etc/auto.ofertas" > /etc/auto.master.d/ofertas.autofs
+	
+	   echo "* -rw,sync servera:/ofertas/&" > /etc/auto.ofertas
+	
+	8) Reinicio servicio autofs:
+	
+	   systemctl restart autofs
+	
+	9) Accedo al contenido de ofertas, p.e. viajes: 
+	   tree /servera-ofertas/viajes
+	
+	/servera-ofertas/
+	└── viajes
+	    ├── caribe.pdf
+	    ├── costa.pdf
+	    └── islas.pdf
+	
+	NOTA: Si hago un tree /servera-ofertas no veo los subdirectorios, tengo que acceder explícitamente a ellos 		primero y luego ya se verán. Al rato ¡¡¡desaparecen!!!
+	```
+	</details>
