@@ -731,3 +731,37 @@
     ```
  
 </details>
+
+35, <detail>
+	<summary> Encontrar todos ficheros del sistema que tengan permiso el Guid activdo y guarda la salida en un fichero </summary>
+	<br>
+
+  ```console
+	 # find / -type f -perm /2000 > listado.txt
+  ```
+    
+   </details>
+
+36. <details>
+	<summary>   Crea un fichero tar en los modos gzip y bzip2, comprueba su contenido y luego lo extraes. </summary>
+	<br>
+
+	 ```console
+     // gzip
+     $ sudo  tar cvfz home.tar.gz /home
+     $ sudo tar -tf home.tar.gz
+     $ file home.tar.gz
+     home.tar.gz: gzip compressed data, from Unix
+  	 $ sudo tar xvfz home.tar.gz 
+      
+   	 // Bzip2 
+     $ sudo tar cvfj home.tar.bz2 /home
+     $ sudo tar -t home.tar.dz2
+     $ file home.tar.bz2
+     home.tar.gz: gzip compressed data, from Unix,
+     $ sudo tar xvfj home.tar.bz2
+    ```
+
+   </details>
+
+   
