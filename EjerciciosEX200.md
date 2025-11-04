@@ -703,3 +703,31 @@
 	```
  
     </details>
+
+34. <details> 
+    <summary> Create a 2GB partition using /dev/sdb make it as ext4 file system and mounted automatically under /mnt/data at boot-start</summary>
+	<br>
+	
+	```console
+	# parted /dev/sdb mklabel gpt 
+	# parted /dev/sdb print
+	// 2GB son (2000000000 /1024)/1024 MiB como en la primera partición tenemos que dejar 1MiB=2048sectores de  
+	// de espacio para no borrar la tabla de partición al inicio. 2GB = 1907.34MiB
+	// se puede hacer ejecutando parted y de forma interactiva o mediante una orden de la consola
+	# parted /dev/sdb mkpart particion2g ext4 1MiB 1908MiB
+	// Comprobamos 
+	# parted /dev/vdc unit GB print
+	// Formateamos la partición 
+	# mkfs.ext4 /dev/sdb1
+	# Actualizamos
+	# udevadm settle
+	// Creamos la carpeta de montaje
+	# mkdir -p /mnt/data
+	// Buscamos el UUID de la partición creada y la añadimos a fstab para no tener que buscarla
+	# echo $(lsbl -nfs /dev/sdb1) >> /etc/fstab
+	// Editamos /etc/fstab para montarlo de forma permanente añadiendo la linea
+	# vim /etc/fstab
+	UUID=ASJDOJD3009j0jf /mnt/data ext4 defaults 0 0 
+    ```
+ 
+</details>
