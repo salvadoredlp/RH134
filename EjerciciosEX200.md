@@ -684,3 +684,22 @@
     La opción noauto hara que tengamos que acceder al punto de montaje para que se monte , no se montara al inicio
     ```
     </details>
+	
+33. <details>
+	<summary> Adjust the context of port 2332 to xen_port_t using the tcp protocol. Adjust SELinux so that it runs in permissive mode persistently. </summary>
+	<br>
+	
+	```console
+		// Vemos que etiqueta tiene el puerto
+		$ sudo semanage port -l | grep 2332
+		// Ajustamos la etiqueta al puerto
+		$ sudo semanage port -a -t xen_port_t -p 2332 tcp
+		// Comprobamos si la etiqueta esta ajustada 
+		$ sudo semanage port -l | grep 2332
+		// Ajustamos el modo permissivo de forma persistente editando el fichero /etc/selinux/config
+		$ sudo /etc/selinux/config
+	  	SELINUX=permissive
+		$ setenforce permissive
+	```
+ 
+    </details>
