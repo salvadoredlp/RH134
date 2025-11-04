@@ -21,6 +21,7 @@
 | `/var/log/audit/audit.log`   | Problemas que con SELinux |
 | `/etc/fstab` | Para montar particiones de forma persistente , consta de seis campos <br> Dispositivo, directorio, sistema de ficheros, opciones, dump, fsck |
 | `/etc/containers/registries.conf`   | Es donde configuraremos los registros donde buscara imagenes podman |
+| `/etc/selinux/config` | Configuración de modo selinux permissive, enforcing de forma persistente |
 
 
 
