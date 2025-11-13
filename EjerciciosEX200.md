@@ -767,7 +767,7 @@
 37. <details>
 	<summary> Listar todos los usuarios en un fichero aportado como parámetro del script, controlando el número de parámetros. Si el número de parámetros es    diferente a 1, finalizar con salida de error 2 y mostrar un ejemplo de cómo se debe ejecutar el script. </summary>
 
-	```script
+	```bash
 	#!/bin/bash
 
 	if [ $# != 1 ] 
