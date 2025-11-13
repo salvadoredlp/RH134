@@ -823,5 +823,3 @@
 		done 
 	 ```
    </details>
-
-</details>
