@@ -730,9 +730,9 @@
 	UUID=ASJDOJD3009j0jf /mnt/data ext4 defaults 0 0 
     ```
  
-</details>
+	</details>
 
-35. <detail>
+35. <details>
 	<summary> Encontrar todos ficheros del sistema que tengan permiso el Guid activdo y guarda la salida en un fichero </summary>
 	<br>
 
