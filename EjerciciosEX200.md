@@ -742,7 +742,7 @@
     
     </details>
 
-36. <details>
+38. <details>
 	<summary>   Crea un fichero tar en los modos gzip y bzip2, comprueba su contenido y luego lo extraes. </summary>
 	<br>
 
@@ -761,7 +761,6 @@
      home.tar.gz: gzip compressed data, from Unix,
      $ sudo tar xvfj home.tar.bz2
     ```
-
     </details>
 
    
