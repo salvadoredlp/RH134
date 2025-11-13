@@ -743,7 +743,6 @@
     </details>
 
 36. <details>
-	
 	<summary>   Crea un fichero tar en los modos gzip y bzip2, comprueba su contenido y luego lo extraes. </summary>
 	<br>
 
@@ -764,3 +763,15 @@
     ```
 
     </details> 
+
+37. <details>
+	<summary> Listar todos los usuarios en un fichero aportado como parámetro del script, controlando el número de parámetros. Si el número de parámetros es    diferente a 1, finalizar con salida de error 2 y mostrar un ejemplo de cómo se debe ejecutar el script. </summary>
+
+	```console
+
+
+  	```
+    
+
+
+    </details>
