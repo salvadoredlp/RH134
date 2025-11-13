@@ -732,7 +732,7 @@
  
 </details>
 
-35, <detail>
+35. <detail>
 	<summary> Encontrar todos ficheros del sistema que tengan permiso el Guid activdo y guarda la salida en un fichero </summary>
 	<br>
 
