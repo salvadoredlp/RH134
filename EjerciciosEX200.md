@@ -782,3 +782,26 @@
   	```
 
     </details>
+
+38. <details>
+	<summary> Listar el nombre de usuario y los grupos secundarios a los que pertenece cada usuario del sistema (SALIDA EJEMPLO PARA CADA USUARIO: "usuario --> grupo1 grupo2 grupo3") NOTA: No mostrar los usuarios si solo tienen su grupo principal.</summary>
+	<br>
+
+	```bash
+	 #!/bin/bash
+ 	         
+	 for usuario in $(cat /etc/passwd | cut -d ":" -f1)
+	 do       
+        grupos=""
+        for grupo in $(grep $usuario /etc/group | grep -Ev '^$usuario'| cut -d ":" -f1)
+        do
+                grupos=${grupos}" "${grupo}
+        done
+        if [ -n "${grupos}" ]                                                                                                               
+        then
+                echo ${usuario} "---> "  ${grupos}
+        fi
+	done     
+    ```
+
+</details>
