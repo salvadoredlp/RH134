@@ -804,4 +804,24 @@
 	done     
     ```
 
+ 39. <detail>
+ 	 <summary> Generar los directorios del fichero directorios.txt (NOTA: ejecutar con root o sudo). </summary>
+     <br>
+
+	 ```bash
+		#!/bin/bash
+		         
+		for directorio in $(cat directorios.txt)
+		do       
+        	if   ! [ -d $directorio ]                                                                                                           
+        	then
+                mkdir -p $directorio
+         
+        	else
+                echo "El directorio ${directorio} ya existe"
+        	fi
+		done 
+	 ```
+   </details>
+
 </details>
