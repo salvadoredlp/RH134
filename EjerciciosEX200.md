@@ -768,10 +768,17 @@
 	<summary> Listar todos los usuarios en un fichero aportado como parámetro del script, controlando el número de parámetros. Si el número de parámetros es    diferente a 1, finalizar con salida de error 2 y mostrar un ejemplo de cómo se debe ejecutar el script. </summary>
 
 	```console
+	#!/bin/bash
 
-
+	if [ $# != 1 ] 
+	then
+   		#echo -e "Numero de parametros incorrecto \nPor favor, introduzca un solo parametro.\nUsage: $(basename $0) <parameter>" > /dev/stderr >&2 
+        exit 2
+    else
+   		cat /etc/passwd | cut -d ":" -f1 > $1
+   		exit 0
+	fi
+ 
   	```
-    
-
 
     </details>
