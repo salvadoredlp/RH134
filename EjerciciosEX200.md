@@ -823,3 +823,55 @@
 		done 
 	 ```
      </details>
+
+40. <details>
+	<summary> Generar los usuarios con password (el formato del fichero será <usuario> <password> por cada linea) indicados en el fichero usuarios.txt. Generar un fichero de log en /tmp/log.generacion.usuarios donde cada línea indique ("<usuario> creado con password: <password>"). </summary>
+<br>
+
+```bash
+#!/bin/bash</details>
+#!/bin/bash
+
+FICHERO=usuarios.txt
+FICHERO_LOG=/tmp/log.generacion.usuarios
+
+# error 3 el script no se ha ejecutado como root
+# error 2 el fichero de usuarios no existe
+
+if ! [ -f $FICHERO_LOG ]
+then
+        touch ${FICHERO_LOG}
+else
+        > ${FICHERO_LOG}
+fi
+
+if [ $(id -u) != 0 ]
+then
+        echo "No puedo crear usuarios, no eres root"
+        exit 3
+fi
+
+if ! [ -f $FICHERO ]
+then
+        echo "El fichero no existe"
+        exit 2
+fi
+
+while read -r linea
+do
+        usuario=$(echo $linea | cut -d" " -f1)
+        useradd $usuario
+        SALIDAUSUARIO=$(echo $?)
+        password=$(echo $linea | cut -d" " -f2)
+        sleep 0.5
+        echo ${password} | passwd --stdin ${usuario}
+        SALIDAPASSWORD=$(echo $?)
+        if [ $SALIDAPASSWORD = 0 ] && [ $SALIDAUSUARIO = 0 ]
+        then
+                echo -n  "Creado usuario : ${usuario} "
+                sleep 0.25
+                echo " asignada contraseña.. "
+                echo "${usuario} creado con password: ${password}" >> $FICHERO_LOG
+        fi
+done < $FICHERO
+```                 
