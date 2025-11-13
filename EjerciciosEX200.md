@@ -804,7 +804,7 @@
 	done     
     ```
 
- 39. <detail>
+ 39. <details>
  	 <summary> Generar los directorios del fichero directorios.txt (NOTA: ejecutar con root o sudo). </summary>
      <br>
 
