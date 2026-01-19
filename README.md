@@ -1,4 +1,4 @@
-### Apuntes para Certificación para el EX200 RHCSA ###
+### Apuntes y resumentes para preparación de la certificación EX200 RHCSA ###
 
 # RHCSA9.3
 
